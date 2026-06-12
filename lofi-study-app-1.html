@@ -1,0 +1,3847 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cozy-room" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zenflow — Lo-Fi Study & Focus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ZENFLOW — LO-FI STUDY APP
+   Design: Warm glassmorphism with animated scene backgrounds
+   Signature: Living animated scenes as immersive wallpapers
+   ============================================================ */
+
+:root {
+  --cream: #F5EFE6;
+  --warm-brown: #8B6F5E;
+  --deep-brown: #3D2B1F;
+  --sage: #7C9E8C;
+  --sage-light: #A8C5B5;
+  --night-blue: #1A2035;
+  --soft-gold: #D4A85A;
+  --muted-rose: #C49A8A;
+  --glass-bg: rgba(255,255,255,0.08);
+  --glass-border: rgba(255,255,255,0.15);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  --text-primary: rgba(255,255,255,0.92);
+  --text-secondary: rgba(255,255,255,0.6);
+  --text-muted: rgba(255,255,255,0.38);
+  --accent: #D4A85A;
+  --accent-soft: rgba(212,168,90,0.2);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-mode="light"] {
+  --glass-bg: rgba(255,255,255,0.55);
+  --glass-border: rgba(255,255,255,0.8);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  --text-primary: rgba(40,28,18,0.92);
+  --text-secondary: rgba(40,28,18,0.6);
+  --text-muted: rgba(40,28,18,0.38);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   ANIMATED SCENE BACKGROUNDS
+   ============================================================ */
+#scene-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  transition: opacity 0.8s ease;
+}
+
+.scene-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Rainy window overlay effect */
+.rain-drop {
+  position: absolute;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(174,214,241,0.6));
+  animation: rainFall linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rainFall {
+  0% { transform: translateY(-100px); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(110vh); opacity: 0; }
+}
+
+/* Firefly / particles for forest scenes */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatParticle ease-in-out infinite;
+}
+
+@keyframes floatParticle {
+  0%, 100% { transform: translate(0,0); opacity: 0; }
+  25% { opacity: 1; }
+  50% { transform: translate(var(--tx), var(--ty)); opacity: 0.8; }
+  75% { opacity: 0.3; }
+}
+
+/* ============================================================
+   APP LAYOUT
+   ============================================================ */
+#app {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--glass-border);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--soft-gold), var(--muted-rose));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.topbar-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.nav-btn {
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.nav-btn:hover { color: var(--text-primary); background: var(--glass-bg); }
+.nav-btn.active { color: var(--accent); background: var(--accent-soft); border-color: rgba(212,168,90,0.3); }
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.icon-btn:hover { color: var(--text-primary); border-color: var(--accent); }
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+#main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+#sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: width 0.3s ease;
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 2px; }
+
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 8px 8px 4px;
+  margin-top: 4px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.sidebar-item:hover { color: var(--text-primary); background: rgba(255,255,255,0.07); }
+.sidebar-item.active { color: var(--accent); background: var(--accent-soft); border-color: rgba(212,168,90,0.25); }
+.sidebar-item .s-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+.sidebar-item .s-badge {
+  margin-left: auto;
+  background: var(--accent);
+  color: var(--deep-brown);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+/* Scenes mini-picker in sidebar */
+.scene-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.scene-thumb {
+  aspect-ratio: 16/9;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 2px solid transparent;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.scene-thumb.active { border-color: var(--accent); }
+.scene-thumb:hover { transform: scale(1.04); }
+
+.scene-thumb canvas {
+  width: 100%; height: 100%;
+  display: block;
+}
+
+.scene-thumb-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  font-size: 9px;
+  font-weight: 600;
+  color: white;
+  padding: 4px 5px 3px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   CONTENT AREA
+   ============================================================ */
+#content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#content::-webkit-scrollbar { width: 5px; }
+#content::-webkit-scrollbar-track { background: transparent; }
+#content::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+
+/* ============================================================
+   GLASS CARD SYSTEM
+   ============================================================ */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover { border-color: rgba(255,255,255,0.22); }
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title .t-icon { font-size: 16px; }
+
+/* ============================================================
+   DASHBOARD GRID
+   ============================================================ */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.dashboard-grid .span-2 { grid-column: span 2; }
+.dashboard-grid .span-3 { grid-column: span 3; }
+
+/* ============================================================
+   HERO GREETING
+   ============================================================ */
+.greeting-card {
+  background: linear-gradient(135deg, rgba(212,168,90,0.15), rgba(124,158,140,0.1));
+  border: 1px solid rgba(212,168,90,0.25);
+  padding: 28px;
+}
+
+.greeting-time {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.greeting-headline {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.greeting-headline em { font-style: italic; color: var(--accent); }
+
+.greeting-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.greeting-quote {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.06);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.greeting-quote cite {
+  display: block;
+  font-style: normal;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================================
+   STATS ROW
+   ============================================================ */
+.stat-item {
+  text-align: center;
+  padding: 16px;
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-value span { color: var(--accent); font-size: 16px; }
+.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.stats-row .stat-item {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ============================================================
+   POMODORO TIMER
+   ============================================================ */
+.timer-card { text-align: center; }
+
+.timer-mode-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+}
+
+.timer-tab {
+  flex: 1;
+  padding: 6px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.04em;
+}
+
+.timer-tab.active {
+  background: var(--accent);
+  color: var(--deep-brown);
+}
+
+.timer-ring-container {
+  position: relative;
+  width: 160px; height: 160px;
+  margin: 0 auto 16px;
+}
+
+.timer-ring-container svg { transform: rotate(-90deg); }
+
+.timer-ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 6; }
+.timer-ring-progress {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 440;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+  filter: drop-shadow(0 0 8px rgba(212,168,90,0.6));
+}
+
+.timer-display {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-time {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.timer-phase {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.timer-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.timer-btn.primary {
+  width: 52px; height: 52px;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--deep-brown);
+  font-size: 20px;
+  box-shadow: 0 4px 20px rgba(212,168,90,0.4);
+}
+
+.timer-btn:hover:not(.primary) { color: var(--text-primary); border-color: var(--accent); }
+.timer-btn.primary:hover { transform: scale(1.06); box-shadow: 0 6px 24px rgba(212,168,90,0.5); }
+
+.timer-sessions {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.session-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  transition: all 0.3s ease;
+}
+
+.session-dot.done { background: var(--accent); box-shadow: 0 0 6px rgba(212,168,90,0.5); }
+.session-dot.active { background: var(--accent); transform: scale(1.4); }
+
+/* ============================================================
+   MUSIC PLAYER
+   ============================================================ */
+.player-card {}
+
+.now-playing-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.album-art {
+  width: 52px; height: 52px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, rgba(212,168,90,0.3), rgba(124,158,140,0.3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  border: 1px solid var(--glass-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.album-art-vinyl {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, rgba(0,0,0,0.1) 0%, transparent 10%, rgba(0,0,0,0.05) 20%, transparent 30%);
+  border-radius: 50%;
+  width: 70%; height: 70%;
+  margin: 15%;
+  animation: vinylSpin 3s linear infinite;
+  animation-play-state: paused;
+}
+
+.album-art-vinyl.spinning { animation-play-state: running; }
+
+@keyframes vinylSpin { to { transform: rotate(360deg); } }
+
+.track-info { flex: 1; min-width: 0; }
+.track-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track-artist { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+.player-progress {
+  margin-bottom: 12px;
+}
+
+.progress-bar-wrap {
+  position: relative;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--sage-light));
+  transition: width 0.5s linear;
+  position: relative;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  right: -4px; top: -3px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 6px rgba(212,168,90,0.6);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.progress-bar-wrap:hover .progress-bar-fill::after { opacity: 1; }
+
+.progress-times {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.player-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.player-btn:hover { color: var(--text-primary); }
+.player-btn.main-play {
+  width: 40px; height: 40px;
+  background: var(--accent);
+  color: var(--deep-brown);
+  font-size: 18px;
+  box-shadow: 0 2px 12px rgba(212,168,90,0.4);
+}
+
+.player-btn.main-play:hover { transform: scale(1.08); }
+.player-btn.active { color: var(--accent); }
+
+/* Volume + Playlist toggle */
+.player-bottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vol-icon { font-size: 13px; color: var(--text-muted); }
+
+.range-input {
+  -webkit-appearance: none;
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.12);
+  outline: none;
+  cursor: pointer;
+}
+
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(212,168,90,0.5);
+}
+
+.range-input::-moz-range-thumb {
+  width: 12px; height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+
+/* Playlist */
+.playlist {
+  margin-top: 14px;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 12px;
+  display: none;
+}
+
+.playlist.show { display: block; }
+
+.playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.playlist-item:hover { background: rgba(255,255,255,0.06); }
+.playlist-item.active { background: var(--accent-soft); }
+
+.playlist-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.playlist-item.active .playlist-num { color: var(--accent); }
+.playlist-track-name { font-size: 13px; font-weight: 500; flex: 1; }
+.playlist-duration { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+
+/* ============================================================
+   AMBIENT SOUND MIXER
+   ============================================================ */
+.sound-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.sound-tile {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sound-tile:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+.sound-tile.active { background: var(--accent-soft); border-color: rgba(212,168,90,0.4); }
+
+.sound-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+.sound-name { font-size: 10px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+
+.sound-tile .range-input { width: 100%; margin-top: 4px; }
+
+/* ============================================================
+   FOCUS WHEEL / PROGRESS RING
+   ============================================================ */
+.focus-chart {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.donut-chart {
+  position: relative;
+  width: 100px; height: 100px;
+  flex-shrink: 0;
+}
+
+.donut-chart svg { transform: rotate(-90deg); }
+.donut-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 10; }
+.donut-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-pct {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.donut-lbl { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+.focus-breakdown { flex: 1; }
+.fb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.fb-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.fb-label { font-size: 12px; color: var(--text-secondary); flex: 1; }
+.fb-value { font-family: var(--font-mono); font-size: 12px; color: var(--text-primary); font-weight: 500; }
+
+/* ============================================================
+   TO-DO LIST
+   ============================================================ */
+.todo-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.todo-input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.todo-input::placeholder { color: var(--text-muted); }
+.todo-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.09); }
+
+.add-btn {
+  padding: 9px 16px;
+  background: var(--accent);
+  color: var(--deep-brown);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.add-btn:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(212,168,90,0.4); }
+
+.todo-list { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; }
+.todo-list::-webkit-scrollbar { width: 3px; }
+.todo-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 2px; }
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.todo-item:hover { background: rgba(255,255,255,0.07); }
+
+.todo-check {
+  width: 18px; height: 18px;
+  border-radius: 5px;
+  border: 2px solid var(--glass-border);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  font-size: 11px;
+  color: transparent;
+}
+
+.todo-check:hover { border-color: var(--accent); }
+
+.todo-item.done .todo-check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--deep-brown);
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.todo-item.done .todo-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.todo-priority {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.priority-high { background: rgba(220,80,80,0.2); color: #FF8080; }
+.priority-med { background: rgba(212,168,90,0.2); color: var(--accent); }
+.priority-low { background: rgba(124,158,140,0.2); color: var(--sage-light); }
+
+.todo-del {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.todo-item:hover .todo-del { opacity: 1; }
+.todo-del:hover { color: #FF8080; background: rgba(220,80,80,0.1); }
+
+/* ============================================================
+   HEATMAP / ACTIVITY
+   ============================================================ */
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 3px;
+  margin-top: 8px;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.heatmap-cell:hover { transform: scale(1.3); }
+.heatmap-cell[data-level="1"] { background: rgba(212,168,90,0.2); }
+.heatmap-cell[data-level="2"] { background: rgba(212,168,90,0.4); }
+.heatmap-cell[data-level="3"] { background: rgba(212,168,90,0.65); }
+.heatmap-cell[data-level="4"] { background: rgba(212,168,90,0.9); }
+
+/* ============================================================
+   FOCUS MODE OVERLAY
+   ============================================================ */
+#focus-mode {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(2px);
+}
+
+#focus-mode.active { display: flex; }
+
+.focus-overlay-card {
+  background: rgba(20,20,30,0.75);
+  backdrop-filter: blur(30px) saturate(1.6);
+  -webkit-backdrop-filter: blur(30px) saturate(1.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-xl);
+  padding: 48px 56px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+.focus-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.focus-big-time {
+  font-family: var(--font-mono);
+  font-size: 72px;
+  font-weight: 400;
+  line-height: 1;
+  color: white;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.focus-task-label {
+  font-size: 15px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 32px;
+  font-style: italic;
+  font-family: var(--font-display);
+}
+
+.focus-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.focus-exit-btn {
+  padding: 10px 24px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.focus-exit-btn:hover { background: rgba(255,255,255,0.08); color: white; }
+
+/* ============================================================
+   THEME PICKER MODAL
+   ============================================================ */
+#theme-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+}
+
+#theme-modal.active { display: flex; }
+
+.theme-modal-card {
+  background: rgba(15,18,28,0.95);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  width: 560px;
+  max-width: 92vw;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-close {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+
+.modal-close:hover { color: white; background: rgba(255,255,255,0.08); }
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.theme-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.theme-card:hover { transform: scale(1.02); }
+.theme-card.active { border-color: var(--accent); }
+
+.theme-preview {
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-preview canvas { width: 100%; height: 100%; display: block; }
+
+.theme-card-body {
+  background: rgba(255,255,255,0.06);
+  padding: 10px 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.theme-card-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.theme-card-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.theme-active-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--accent);
+  color: var(--deep-brown);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.theme-card.active .theme-active-badge { opacity: 1; }
+
+/* ============================================================
+   AUTH PANEL
+   ============================================================ */
+#auth-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,12,20,0.85);
+  backdrop-filter: blur(12px);
+}
+
+.auth-card {
+  background: rgba(20,22,34,0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  width: 420px;
+  max-width: 92vw;
+  text-align: center;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+}
+
+.auth-logo {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.auth-tagline {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  font-style: italic;
+  font-family: var(--font-display);
+}
+
+.auth-tab-row {
+  display: flex;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  margin-bottom: 24px;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.2s;
+}
+
+.auth-tab.active { background: var(--accent); color: var(--deep-brown); }
+
+.auth-field {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.auth-field::placeholder { color: var(--text-muted); }
+.auth-field:focus { border-color: var(--accent); background: rgba(255,255,255,0.09); }
+
+.auth-btn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--soft-gold), var(--muted-rose));
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--deep-brown);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.04em;
+  margin-bottom: 16px;
+}
+
+.auth-btn:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(212,168,90,0.4); }
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+.auth-social-btn {
+  width: 100%;
+  padding: 11px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.auth-social-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+.auth-guest {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.auth-guest:hover { color: var(--text-secondary); }
+.auth-guest span { text-decoration: underline; }
+
+/* ============================================================
+   NOTIFICATIONS / TOAST
+   ============================================================ */
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: rgba(20,22,34,0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  font-size: 13px;
+  color: var(--text-primary);
+  max-width: 300px;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-icon { font-size: 16px; }
+.toast.success { border-color: rgba(124,158,140,0.4); }
+.toast.info { border-color: rgba(212,168,90,0.3); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(20px) scale(0.95); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(20px); }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .dashboard-grid { grid-template-columns: 1fr 1fr; }
+  .dashboard-grid .span-3 { grid-column: span 2; }
+  .sound-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 768px) {
+  #sidebar { display: none; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .dashboard-grid .span-2, .dashboard-grid .span-3 { grid-column: span 1; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .sound-grid { grid-template-columns: repeat(4, 1fr); }
+  #content { padding: 14px; gap: 12px; }
+  .topbar-nav { display: none; }
+  .focus-big-time { font-size: 56px; }
+}
+
+@media (max-width: 480px) {
+  .sound-grid { grid-template-columns: repeat(2, 1fr); }
+  .theme-grid { grid-template-columns: 1fr; }
+  .auth-card { padding: 28px 20px; }
+}
+
+/* ============================================================
+   PAGE VIEWS
+   ============================================================ */
+.page-view { display: none; }
+.page-view.active { display: flex; flex-direction: column; gap: 20px; }
+
+/* Full scrollable stats page */
+.week-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 100px;
+}
+
+.week-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+}
+
+.week-bar {
+  flex: 1;
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(to top, var(--accent), var(--sage-light));
+  min-height: 4px;
+  transition: height 0.5s ease;
+  max-height: 84px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.week-bar-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+/* Pulse animation for active states */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.pulsing { animation: pulse 2s ease-in-out infinite; }
+
+/* Glowing border for selected items */
+.glow-accent { box-shadow: 0 0 0 1px rgba(212,168,90,0.5), 0 0 24px rgba(212,168,90,0.15); }
+
+/* Breathing glow for focus mode timer */
+@keyframes breathe {
+  0%, 100% { text-shadow: 0 0 20px rgba(212,168,90,0.0); }
+  50% { text-shadow: 0 0 40px rgba(212,168,90,0.5); }
+}
+
+.focus-big-time.active { animation: breathe 4s ease-in-out infinite; }
+
+</style>
+</head>
+<body>
+
+<!-- SCENE CANVAS (animated background) -->
+<canvas id="scene-canvas"></canvas>
+<div class="scene-overlay" id="scene-overlay"></div>
+
+<!-- AUTH PANEL -->
+<div id="auth-panel">
+  <div class="auth-card">
+    <div class="auth-logo">Zenflow</div>
+    <div class="auth-tagline">"Where deep work finds its rhythm."</div>
+    <div class="auth-tab-row">
+      <button class="auth-tab active" onclick="switchAuthTab('login', this)">Sign In</button>
+      <button class="auth-tab" onclick="switchAuthTab('signup', this)">Create Account</button>
+    </div>
+    <div id="auth-form">
+      <input class="auth-field" type="email" placeholder="Email address" id="auth-email">
+      <input class="auth-field" type="password" placeholder="Password" id="auth-pass">
+      <button class="auth-btn" onclick="doAuth()">Continue</button>
+    </div>
+    <div class="auth-divider">or</div>
+    <button class="auth-social-btn" onclick="doAuth()">🔵 Continue with Google</button>
+    <button class="auth-social-btn" onclick="doAuth()">⚫ Continue with Apple</button>
+    <div class="auth-guest" onclick="doAuth()">Continue as guest — <span>no account needed</span></div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app" style="opacity:0; transition: opacity 0.5s ease;">
+
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div class="logo" onclick="showPage('dashboard')">
+      <div class="logo-icon">🌿</div>
+      <div class="logo-text">Zenflow</div>
+    </div>
+    <div class="topbar-nav">
+      <button class="nav-btn active" onclick="showPage('dashboard', this)">Dashboard</button>
+      <button class="nav-btn" onclick="showPage('stats', this)">Focus Stats</button>
+      <button class="nav-btn" onclick="showPage('tasks', this)">Tasks</button>
+      <button class="nav-btn" onclick="showPage('sounds', this)">Ambient</button>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="toggleMode()" title="Toggle light/dark">🌙</button>
+      <button class="icon-btn" onclick="openThemeModal()" title="Change scene">🎨</button>
+      <button class="icon-btn" onclick="enterFocusMode()" title="Focus mode">⚡</button>
+      <button class="icon-btn" style="background: var(--accent-soft); border-color: rgba(212,168,90,0.4); color: var(--accent);">SF</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- SIDEBAR -->
+    <div id="sidebar">
+      <div class="sidebar-section-label">Scenes</div>
+      <div class="scene-grid" id="scene-thumbs"></div>
+
+      <div class="sidebar-section-label" style="margin-top:8px;">Navigate</div>
+      <div class="sidebar-item active" onclick="showPage('dashboard', null, this)">
+        <span class="s-icon">🏠</span> Dashboard
+      </div>
+      <div class="sidebar-item" onclick="showPage('stats', null, this)">
+        <span class="s-icon">📊</span> Focus Stats
+      </div>
+      <div class="sidebar-item" onclick="showPage('tasks', null, this)">
+        <span class="s-icon">✅</span> Tasks
+        <span class="s-badge" id="tasks-badge">3</span>
+      </div>
+      <div class="sidebar-item" onclick="showPage('sounds', null, this)">
+        <span class="s-icon">🎵</span> Ambient Mixer
+      </div>
+
+      <div class="sidebar-section-label" style="margin-top:8px;">Timer Presets</div>
+      <div class="sidebar-item" onclick="setTimerPreset(25,5)">
+        <span class="s-icon">🍅</span> Pomodoro 25/5
+      </div>
+      <div class="sidebar-item" onclick="setTimerPreset(50,10)">
+        <span class="s-icon">🔥</span> Deep Work 50/10
+      </div>
+      <div class="sidebar-item" onclick="setTimerPreset(90,20)">
+        <span class="s-icon">⚡</span> Ultradian 90/20
+      </div>
+
+      <div class="sidebar-section-label" style="margin-top:8px;">Quick Sounds</div>
+      <div class="sidebar-item" onclick="toggleSound('rain')" id="sb-rain">
+        <span class="s-icon">🌧️</span> Rain
+      </div>
+      <div class="sidebar-item" onclick="toggleSound('fireplace')" id="sb-fire">
+        <span class="s-icon">🔥</span> Fireplace
+      </div>
+      <div class="sidebar-item" onclick="toggleSound('forest')" id="sb-forest">
+        <span class="s-icon">🌲</span> Forest Birds
+      </div>
+      <div class="sidebar-item" onclick="toggleSound('ocean')" id="sb-ocean">
+        <span class="s-icon">🌊</span> Ocean Waves
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="content">
+
+      <!-- DASHBOARD PAGE -->
+      <div class="page-view active" id="page-dashboard">
+        <div class="dashboard-grid">
+
+          <!-- Greeting card (span 2) -->
+          <div class="glass-card greeting-card span-2">
+            <div class="greeting-time" id="greeting-time">Good morning · Thursday, June 11</div>
+            <div class="greeting-headline">Ready to <em>flow</em>, Sarah?</div>
+            <div class="greeting-sub">You've studied for 3h 20m this week. You're on a 4-day streak — keep it going!</div>
+            <div class="greeting-quote" id="daily-quote">
+              "The secret of getting ahead is getting started."
+              <cite>— Mark Twain</cite>
+            </div>
+          </div>
+
+          <!-- Pomodoro Timer -->
+          <div class="glass-card timer-card">
+            <div class="card-title"><span class="t-icon">⏱</span> Pomodoro</div>
+            <div class="timer-mode-tabs">
+              <button class="timer-tab active" onclick="setTimerPreset(25,5,this)">25/5</button>
+              <button class="timer-tab" onclick="setTimerPreset(50,10,this)">50/10</button>
+              <button class="timer-tab" onclick="openCustomTimer(this)">Custom</button>
+            </div>
+            <div class="timer-ring-container">
+              <svg width="160" height="160" viewBox="0 0 160 160">
+                <circle class="timer-ring-bg" cx="80" cy="80" r="70"/>
+                <circle class="timer-ring-progress" id="timer-ring" cx="80" cy="80" r="70"/>
+              </svg>
+              <div class="timer-display">
+                <div class="timer-time" id="timer-display">25:00</div>
+                <div class="timer-phase" id="timer-phase">FOCUS</div>
+              </div>
+            </div>
+            <div class="timer-controls">
+              <button class="timer-btn" onclick="resetTimer()" title="Reset">↺</button>
+              <button class="timer-btn primary" id="timer-playbtn" onclick="toggleTimer()">▶</button>
+              <button class="timer-btn" onclick="skipTimer()" title="Skip">⏭</button>
+            </div>
+            <div class="timer-sessions" id="timer-sessions">
+              <div class="session-dot active"></div>
+              <div class="session-dot"></div>
+              <div class="session-dot"></div>
+              <div class="session-dot"></div>
+            </div>
+          </div>
+
+          <!-- Stats row (span 3) -->
+          <div class="span-3">
+            <div class="stats-row glass-card" style="padding:0; gap:0; border-radius: var(--radius-md);">
+              <div class="stat-item">
+                <div class="stat-value" id="stat-today">1<span>h 40m</span></div>
+                <div class="stat-label">Today</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" id="stat-week">3<span>h 20m</span></div>
+                <div class="stat-label">This Week</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">4<span>🔥</span></div>
+                <div class="stat-label">Day Streak</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">7<span>/12</span></div>
+                <div class="stat-label">Tasks Done</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Music Player -->
+          <div class="glass-card player-card span-2">
+            <div class="card-title"><span class="t-icon">🎵</span> Lo-Fi Player</div>
+            <div class="now-playing-info">
+              <div class="album-art">
+                🎶
+                <div class="album-art-vinyl" id="vinyl-disc"></div>
+              </div>
+              <div class="track-info">
+                <div class="track-name" id="track-name">Rainy Café Vibes</div>
+                <div class="track-artist" id="track-artist">Lo-Fi Study Beats · Chill Mix</div>
+              </div>
+              <button class="icon-btn" id="playlist-toggle-btn" onclick="togglePlaylist()" title="Playlist">☰</button>
+            </div>
+            <div class="player-progress">
+              <div class="progress-bar-wrap" onclick="seekTo(event)">
+                <div class="progress-bar-fill" id="progress-fill" style="width: 35%"></div>
+              </div>
+              <div class="progress-times">
+                <span id="p-current">1:24</span>
+                <span id="p-duration">4:02</span>
+              </div>
+            </div>
+            <div class="player-controls">
+              <button class="player-btn" onclick="playerShuffle()" id="shuffle-btn" title="Shuffle">⇄</button>
+              <button class="player-btn" onclick="prevTrack()">⏮</button>
+              <button class="player-btn main-play" id="play-btn" onclick="togglePlay()">▶</button>
+              <button class="player-btn" onclick="nextTrack()">⏭</button>
+              <button class="player-btn" onclick="playerRepeat()" id="repeat-btn" title="Repeat">↻</button>
+            </div>
+            <div class="player-bottom">
+              <span class="vol-icon">🔈</span>
+              <input type="range" class="range-input" id="music-vol" value="70" min="0" max="100" onchange="setMusicVolume(this.value)">
+              <span class="vol-icon">🔊</span>
+            </div>
+            <div class="playlist" id="playlist-panel">
+              <!-- dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Focus chart -->
+          <div class="glass-card">
+            <div class="card-title"><span class="t-icon">🎯</span> Today's Focus</div>
+            <div class="focus-chart">
+              <div class="donut-chart">
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                  <circle class="donut-bg" cx="50" cy="50" r="40"/>
+                  <circle class="donut-fill" cx="50" cy="50" r="40"
+                    stroke="var(--accent)" stroke-dasharray="251"
+                    stroke-dashoffset="65" id="donut-focus"/>
+                </svg>
+                <div class="donut-center">
+                  <div class="donut-pct" style="color:var(--accent)">74%</div>
+                  <div class="donut-lbl">Goal</div>
+                </div>
+              </div>
+              <div class="focus-breakdown">
+                <div class="fb-row">
+                  <div class="fb-dot" style="background:var(--accent)"></div>
+                  <div class="fb-label">Deep Work</div>
+                  <div class="fb-value">1h 20m</div>
+                </div>
+                <div class="fb-row">
+                  <div class="fb-dot" style="background:var(--sage)"></div>
+                  <div class="fb-label">Light Study</div>
+                  <div class="fb-value">20m</div>
+                </div>
+                <div class="fb-row">
+                  <div class="fb-dot" style="background:rgba(255,255,255,0.2)"></div>
+                  <div class="fb-label">Breaks</div>
+                  <div class="fb-value">15m</div>
+                </div>
+                <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--glass-border);">
+                  <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Daily Goal</div>
+                  <div class="progress-bar-wrap" style="height:5px;">
+                    <div class="progress-bar-fill" style="width:74%; height:100%;"></div>
+                  </div>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">1h 40m / 2h 15m</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ambient Sound Quick Mixer -->
+          <div class="glass-card span-2">
+            <div class="card-title"><span class="t-icon">🎧</span> Ambient Mix</div>
+            <div class="sound-grid" id="quick-sound-grid"></div>
+          </div>
+
+          <!-- To-Do List -->
+          <div class="glass-card span-1">
+            <div class="card-title"><span class="t-icon">✅</span> Focus Tasks</div>
+            <div class="todo-input-row">
+              <input class="todo-input" type="text" placeholder="Add a task..." id="todo-input-dash" onkeydown="if(event.key==='Enter')addTodo()">
+              <button class="add-btn" onclick="addTodo()">+Add</button>
+            </div>
+            <div class="todo-list" id="todo-list-dash"></div>
+          </div>
+
+          <!-- 2-Week Heatmap -->
+          <div class="glass-card span-3">
+            <div class="card-title"><span class="t-icon">📅</span> Study Activity — Last 14 Days</div>
+            <div class="heatmap-grid" id="heatmap-grid"></div>
+            <div style="display:flex; align-items:center; gap:6px; margin-top:12px; font-size:11px; color:var(--text-muted);">
+              <span>Less</span>
+              <div style="width:12px;height:12px;border-radius:2px;background:rgba(255,255,255,0.05)"></div>
+              <div style="width:12px;height:12px;border-radius:2px;background:rgba(212,168,90,0.2)"></div>
+              <div style="width:12px;height:12px;border-radius:2px;background:rgba(212,168,90,0.45)"></div>
+              <div style="width:12px;height:12px;border-radius:2px;background:rgba(212,168,90,0.7)"></div>
+              <div style="width:12px;height:12px;border-radius:2px;background:rgba(212,168,90,0.92)"></div>
+              <span>More</span>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /page-dashboard -->
+
+      <!-- STATS PAGE -->
+      <div class="page-view" id="page-stats">
+        <div class="dashboard-grid">
+          <div class="glass-card span-3">
+            <div class="card-title"><span class="t-icon">📊</span> Weekly Focus Overview</div>
+            <div class="week-bar-chart" id="week-chart"></div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title"><span class="t-icon">🏆</span> Best Day</div>
+            <div class="stat-value" style="font-size:36px;margin:12px 0 4px">4<span>h 10m</span></div>
+            <div style="font-size:13px;color:var(--text-secondary)">Wednesday · Jun 8</div>
+            <div style="margin-top:14px; font-size:12px; color:var(--text-muted);">Personal best this month</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title"><span class="t-icon">🔥</span> Streak</div>
+            <div class="stat-value" style="font-size:36px;margin:12px 0 4px">4<span> days</span></div>
+            <div style="font-size:13px;color:var(--text-secondary)">Keep going! 3 more for a weekly streak</div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title"><span class="t-icon">⏱</span> Total Sessions</div>
+            <div class="stat-value" style="font-size:36px;margin:12px 0 4px">23<span> this week</span></div>
+            <div style="font-size:13px;color:var(--text-secondary)">Avg. 46 min per session</div>
+          </div>
+          <div class="glass-card span-3">
+            <div class="card-title"><span class="t-icon">📅</span> Monthly Heatmap</div>
+            <div id="monthly-heatmap" style="display:grid;grid-template-columns:repeat(30,1fr);gap:4px;margin-top:8px;"></div>
+          </div>
+          <div class="glass-card span-2">
+            <div class="card-title"><span class="t-icon">💡</span> Productivity Tips</div>
+            <div id="tips-list"></div>
+          </div>
+          <div class="glass-card">
+            <div class="card-title"><span class="t-icon">🎯</span> This Month</div>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                  <span style="color:var(--text-secondary)">Study Hours</span>
+                  <span style="color:var(--accent);font-family:var(--font-mono)">18h / 30h</span>
+                </div>
+                <div class="progress-bar-wrap" style="height:5px;"><div class="progress-bar-fill" style="width:60%;height:100%;"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                  <span style="color:var(--text-secondary)">Tasks Completed</span>
+                  <span style="color:var(--sage);font-family:var(--font-mono)">41 / 60</span>
+                </div>
+                <div class="progress-bar-wrap" style="height:5px;"><div class="progress-bar-fill" style="width:68%;height:100%;background:linear-gradient(90deg,var(--sage),var(--sage-light));"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                  <span style="color:var(--text-secondary)">Pomodoros</span>
+                  <span style="color:var(--muted-rose);font-family:var(--font-mono)">56 / 80</span>
+                </div>
+                <div class="progress-bar-wrap" style="height:5px;"><div class="progress-bar-fill" style="width:70%;height:100%;background:linear-gradient(90deg,var(--muted-rose),#d4a8aa);"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /page-stats -->
+
+      <!-- TASKS PAGE -->
+      <div class="page-view" id="page-tasks">
+        <div class="dashboard-grid">
+          <div class="glass-card span-3">
+            <div class="card-title"><span class="t-icon">✅</span> Task Manager</div>
+            <div class="todo-input-row" style="margin-bottom:8px;">
+              <input class="todo-input" type="text" placeholder="Add new task..." id="todo-input-tasks" onkeydown="if(event.key==='Enter')addTodo('tasks')">
+              <select class="todo-input" style="flex:0 0 100px;padding:9px 10px;" id="todo-priority-tasks">
+                <option value="high">🔴 High</option>
+                <option value="med" selected>🟡 Medium</option>
+                <option value="low">🟢 Low</option>
+              </select>
+              <button class="add-btn" onclick="addTodo('tasks')">Add Task</button>
+            </div>
+            <div class="todo-list" id="todo-list-tasks" style="max-height:none;"></div>
+          </div>
+        </div>
+      </div><!-- /page-tasks -->
+
+      <!-- SOUNDS PAGE -->
+      <div class="page-view" id="page-sounds">
+        <div class="dashboard-grid">
+          <div class="glass-card span-3">
+            <div class="card-title"><span class="t-icon">🎧</span> Full Ambient Mixer</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Mix multiple sounds simultaneously. Each has independent volume control.</div>
+            <div class="sound-grid" id="full-sound-grid" style="grid-template-columns:repeat(4,1fr);gap:12px;"></div>
+          </div>
+          <div class="glass-card span-3">
+            <div class="card-title"><span class="t-icon">🎵</span> Full Playlist</div>
+            <div id="full-playlist"></div>
+          </div>
+        </div>
+      </div><!-- /page-sounds -->
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- FOCUS MODE OVERLAY -->
+<div id="focus-mode">
+  <div class="focus-overlay-card">
+    <div class="focus-label">⚡ Focus Mode Active</div>
+    <div class="focus-big-time active" id="focus-timer-display">25:00</div>
+    <div class="focus-task-label" id="focus-task-label">Stay in the flow...</div>
+    <div class="focus-actions">
+      <button class="timer-btn primary" onclick="toggleTimer()" style="width:56px;height:56px;font-size:22px;" id="focus-play-btn">▶</button>
+      <button class="focus-exit-btn" onclick="exitFocusMode()">Exit Focus Mode</button>
+    </div>
+  </div>
+</div>
+
+<!-- THEME MODAL -->
+<div id="theme-modal">
+  <div class="theme-modal-card">
+    <div class="modal-title">
+      <span>🎨 Choose Your Scene</span>
+      <button class="modal-close" onclick="closeThemeModal()">✕</button>
+    </div>
+    <div class="theme-grid" id="theme-grid"></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script>
+// ============================================================
+// ZENFLOW — LO-FI STUDY APP
+// Full interactive JavaScript
+// ============================================================
+
+// ============================================================
+// SCENE DEFINITIONS & RENDERING
+// ============================================================
+const SCENES = [
+  {
+    id: 'rainy-window', name: 'Rainy Night', icon: '🌧️',
+    desc: 'A cozy café window in the rain',
+    render: renderRainyWindow, rainEffect: true
+  },
+  {
+    id: 'cozy-room', name: 'Cozy Study', icon: '🕯️',
+    desc: 'Warm candlelit study room',
+    render: renderCozyRoom, particles: true
+  },
+  {
+    id: 'forest', name: 'Forest Cabin', icon: '🌲',
+    desc: 'Misty morning forest with fireflies',
+    render: renderForest, particles: true
+  },
+  {
+    id: 'mountain-sunset', name: 'Mountain Sunset', icon: '🏔️',
+    desc: 'Golden hour over still mountains',
+    render: renderMountainSunset
+  },
+  {
+    id: 'night-city', name: 'Night City', icon: '🌃',
+    desc: 'Japanese study café, neon & rain',
+    render: renderNightCity, rainEffect: true
+  },
+  {
+    id: 'japanese-cafe', name: 'Japanese Café', icon: '🍵',
+    desc: 'Warm tatami study room',
+    render: renderJapaneseCafe, particles: true
+  }
+];
+
+let currentScene = SCENES[0];
+let animFrame = null;
+let time = 0;
+
+const canvas = document.getElementById('scene-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function renderRainyWindow(ctx, w, h, t) {
+  // Night sky gradient
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#0a0e1a');
+  bg.addColorStop(1, '#1a1f33');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Distant city lights
+  for (let i = 0; i < 40; i++) {
+    const x = ((i * 137 + 50) % w);
+    const y = h * 0.55 + Math.sin(i * 2.3) * 30;
+    const flicker = 0.4 + 0.6 * Math.abs(Math.sin(t * 0.5 + i));
+    ctx.fillStyle = `rgba(255,${180 + (i % 3) * 25},${100 + (i % 4) * 20},${flicker * 0.7})`;
+    ctx.beginPath();
+    ctx.arc(x, y, 1.5 + (i % 3), 0, Math.PI * 2);
+    ctx.fill();
+    // Reflection in rain
+    ctx.fillStyle = `rgba(255,${180 + (i % 3) * 25},${100 + (i % 4) * 20},${flicker * 0.15})`;
+    ctx.fillRect(x - 1, y + 2, 2, 30 + (i % 20));
+  }
+
+  // Ground lights
+  const grd = ctx.createLinearGradient(0, h * 0.7, 0, h);
+  grd.addColorStop(0, 'rgba(30,40,80,0.9)');
+  grd.addColorStop(1, '#050810');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, h * 0.7, w, h * 0.3);
+
+  // Window frame
+  ctx.strokeStyle = 'rgba(180,140,90,0.4)';
+  ctx.lineWidth = 12;
+  ctx.strokeRect(w * 0.1, h * 0.05, w * 0.8, h * 0.88);
+  ctx.strokeStyle = 'rgba(180,140,90,0.25)';
+  ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(w / 2, h * 0.05); ctx.lineTo(w / 2, h * 0.93); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(w * 0.1, h * 0.5); ctx.lineTo(w * 0.9, h * 0.5); ctx.stroke();
+
+  // Window droplets on glass (simulated)
+  for (let i = 0; i < 12; i++) {
+    const x = w * 0.12 + ((i * 73 + t * 5) % (w * 0.76));
+    const y = h * 0.08 + ((i * 41 + t * 15 * (1 + i * 0.1)) % (h * 0.82));
+    const a = 0.3 + 0.3 * Math.sin(t + i);
+    ctx.fillStyle = `rgba(120,160,220,${a})`;
+    ctx.beginPath();
+    ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+    ctx.fill();
+    // Trailing streak
+    if (i % 3 === 0) {
+      ctx.strokeStyle = `rgba(120,160,220,${a * 0.5})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 2, y + 20); ctx.stroke();
+    }
+  }
+
+  // Warm interior glow from bottom
+  const warmGlow = ctx.createRadialGradient(w / 2, h, 0, w / 2, h, w * 0.6);
+  warmGlow.addColorStop(0, 'rgba(200,140,60,0.12)');
+  warmGlow.addColorStop(1, 'transparent');
+  ctx.fillStyle = warmGlow;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function renderCozyRoom(ctx, w, h, t) {
+  // Warm room gradient
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#1a0d06');
+  bg.addColorStop(0.5, '#2d1505');
+  bg.addColorStop(1, '#0d0602');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Fireplace glow
+  const fireX = w * 0.5;
+  const fireY = h * 0.75;
+  const fireGlow = ctx.createRadialGradient(fireX, fireY, 0, fireX, fireY, w * 0.5);
+  const flicker = 0.8 + 0.2 * Math.sin(t * 8 + 1.3);
+  fireGlow.addColorStop(0, `rgba(255,160,50,${0.25 * flicker})`);
+  fireGlow.addColorStop(0.4, `rgba(200,80,20,${0.12 * flicker})`);
+  fireGlow.addColorStop(1, 'transparent');
+  ctx.fillStyle = fireGlow;
+  ctx.fillRect(0, 0, w, h);
+
+  // Bookshelf silhouette (top)
+  ctx.fillStyle = 'rgba(30,15,5,0.8)';
+  for (let i = 0; i < 20; i++) {
+    const x = i * (w / 20);
+    const bh = 40 + (i * 17 % 40);
+    ctx.fillRect(x + 2, 10, w / 22, bh);
+  }
+
+  // Desk silhouette
+  ctx.fillStyle = 'rgba(25,12,4,0.9)';
+  ctx.fillRect(w * 0.2, h * 0.7, w * 0.6, 8);
+  ctx.fillRect(w * 0.22, h * 0.7, 8, h * 0.3);
+  ctx.fillRect(w * 0.76, h * 0.7, 8, h * 0.3);
+
+  // Lamp glow (desk lamp)
+  const lampX = w * 0.65;
+  const lampY = h * 0.62;
+  const lampGlow = ctx.createRadialGradient(lampX, lampY, 0, lampX, lampY, w * 0.22);
+  lampGlow.addColorStop(0, `rgba(255,220,120,${0.18 * flicker})`);
+  lampGlow.addColorStop(0.5, `rgba(255,160,50,${0.08 * flicker})`);
+  lampGlow.addColorStop(1, 'transparent');
+  ctx.fillStyle = lampGlow;
+  ctx.fillRect(0, 0, w, h);
+
+  // Candle flames
+  [[w*0.35, h*0.68], [w*0.65, h*0.68]].forEach(([cx, cy]) => {
+    const flk = 0.7 + 0.3 * Math.sin(t * 12 + cx);
+    const candleGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30);
+    candleGlow.addColorStop(0, `rgba(255,200,60,${0.6 * flk})`);
+    candleGlow.addColorStop(0.5, `rgba(255,120,30,${0.3 * flk})`);
+    candleGlow.addColorStop(1, 'transparent');
+    ctx.fillStyle = candleGlow;
+    ctx.fillRect(cx - 30, cy - 30, 60, 60);
+    ctx.fillStyle = `rgba(255,240,100,${0.9 * flk})`;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy - 5, 4, 7 * flk, Math.sin(t * 10) * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function renderForest(ctx, w, h, t) {
+  // Sky gradient — dawn/dusk
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#0d1a0a');
+  bg.addColorStop(0.5, '#1a3015');
+  bg.addColorStop(1, '#0a1a08');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Moon
+  const moonGlow = ctx.createRadialGradient(w * 0.8, h * 0.15, 0, w * 0.8, h * 0.15, 60);
+  moonGlow.addColorStop(0, 'rgba(220,230,180,0.9)');
+  moonGlow.addColorStop(0.3, 'rgba(180,200,140,0.3)');
+  moonGlow.addColorStop(1, 'transparent');
+  ctx.fillStyle = moonGlow;
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = 'rgba(230,240,200,0.95)';
+  ctx.beginPath(); ctx.arc(w * 0.8, h * 0.15, 20, 0, Math.PI * 2); ctx.fill();
+
+  // Misty ground
+  const mist = ctx.createLinearGradient(0, h * 0.6, 0, h);
+  mist.addColorStop(0, 'transparent');
+  mist.addColorStop(0.5, 'rgba(140,200,150,0.06)');
+  mist.addColorStop(1, 'rgba(120,180,130,0.1)');
+  ctx.fillStyle = mist;
+  ctx.fillRect(0, h * 0.6, w, h * 0.4);
+
+  // Background trees
+  for (let i = 0; i < 15; i++) {
+    const tx = (i / 14) * w;
+    const th = h * 0.3 + (i * 47 % (h * 0.25));
+    const ty = h - th;
+    ctx.fillStyle = `rgba(${15 + i*3},${30 + i*4},${15 + i*2},0.8)`;
+    drawTree(ctx, tx, ty, 30 + i * 5, th);
+  }
+
+  // Foreground trees (darker)
+  for (let i = 0; i < 8; i++) {
+    const tx = (i / 7) * w * 1.1 - w * 0.05;
+    const th = h * 0.5 + (i * 23 % (h * 0.15));
+    const ty = h - th;
+    ctx.fillStyle = `rgba(5,15,5,0.95)`;
+    drawTree(ctx, tx, ty, 45 + i * 8, th);
+  }
+
+  // Stars
+  for (let i = 0; i < 60; i++) {
+    const sx = (i * 137.508) % w;
+    const sy = (i * 73.421) % (h * 0.55);
+    const brightness = 0.5 + 0.5 * Math.sin(t * 0.8 + i * 1.7);
+    ctx.fillStyle = `rgba(220,230,200,${brightness * 0.7})`;
+    ctx.beginPath(); ctx.arc(sx, sy, 0.8 + (i % 3) * 0.3, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+function drawTree(ctx, x, y, r, h) {
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x - r, y + h * 0.4);
+  ctx.lineTo(x - r * 0.6, y + h * 0.4);
+  ctx.lineTo(x - r * 0.8, y + h * 0.7);
+  ctx.lineTo(x - r * 0.4, y + h * 0.7);
+  ctx.lineTo(x - r * 0.5, y + h);
+  ctx.lineTo(x + r * 0.5, y + h);
+  ctx.lineTo(x + r * 0.4, y + h * 0.7);
+  ctx.lineTo(x + r * 0.8, y + h * 0.7);
+  ctx.lineTo(x + r * 0.6, y + h * 0.4);
+  ctx.lineTo(x + r, y + h * 0.4);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function renderMountainSunset(ctx, w, h, t) {
+  // Sky gradient
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#1a0a28');
+  bg.addColorStop(0.3, '#3d1a4a');
+  bg.addColorStop(0.6, '#8b3a1a');
+  bg.addColorStop(0.8, '#d4601a');
+  bg.addColorStop(1, '#e88a30');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Sun
+  const sunY = h * 0.6 + Math.sin(t * 0.05) * 5;
+  const sunGlow = ctx.createRadialGradient(w / 2, sunY, 0, w / 2, sunY, w * 0.4);
+  sunGlow.addColorStop(0, 'rgba(255,220,100,0.5)');
+  sunGlow.addColorStop(0.3, 'rgba(255,140,30,0.2)');
+  sunGlow.addColorStop(1, 'transparent');
+  ctx.fillStyle = sunGlow;
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = 'rgba(255,230,120,0.95)';
+  ctx.beginPath(); ctx.arc(w / 2, sunY, 30, 0, Math.PI * 2); ctx.fill();
+
+  // Mountain layers
+  const mtns = [
+    { color: '#1a0a28', scale: 0.6 },
+    { color: '#2d1040', scale: 0.5 },
+    { color: '#4a1a10', scale: 0.4 },
+    { color: '#6b2810', scale: 0.28 },
+  ];
+
+  mtns.forEach(({ color, scale }) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    for (let x = 0; x <= w; x += 40) {
+      const y = h * (0.95 - scale) + Math.sin(x * 0.008 + scale * 10) * h * 0.12 + Math.cos(x * 0.015 + scale * 5) * h * 0.08;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath(); ctx.fill();
+  });
+
+  // Lake reflection
+  const lake = ctx.createLinearGradient(0, h * 0.78, 0, h);
+  lake.addColorStop(0, 'rgba(100,40,20,0.8)');
+  lake.addColorStop(0.5, 'rgba(200,100,30,0.6)');
+  lake.addColorStop(1, 'rgba(220,140,50,0.4)');
+  ctx.fillStyle = lake;
+  ctx.fillRect(0, h * 0.78, w, h * 0.22);
+
+  // Sun reflection in lake
+  for (let i = 0; i < 8; i++) {
+    const ry = h * 0.8 + i * 8;
+    const rx = w / 2;
+    ctx.fillStyle = `rgba(255,220,100,${0.15 - i * 0.015})`;
+    ctx.fillRect(rx - (20 + i * 12), ry, (40 + i * 24), 4);
+  }
+}
+
+function renderNightCity(ctx, w, h, t) {
+  // Dark blue/purple night
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#050814');
+  bg.addColorStop(0.6, '#0a0e20');
+  bg.addColorStop(1, '#02040e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Neon glow in sky
+  [[w * 0.3, '#ff0080'], [w * 0.7, '#00c8ff']].forEach(([nx, nc]) => {
+    const ng = ctx.createRadialGradient(nx, 0, 0, nx, 0, h * 0.6);
+    ng.addColorStop(0, nc.replace(')', ',0.08)').replace('rgb', 'rgba').replace('#', 'rgba(').replace(/^rgba\(([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})/, (m, r, g, b) => `rgba(${parseInt(r,16)},${parseInt(g,16)},${parseInt(b,16)}`));
+    ng.addColorStop(1, 'transparent');
+    ctx.fillStyle = `rgba(255,0,128,0.04)`;
+    ctx.fillRect(0, 0, w, h);
+  });
+
+  // Buildings
+  for (let i = 0; i < 25; i++) {
+    const bx = (i / 24) * w * 1.1 - w * 0.05;
+    const bw = 30 + (i * 23 % 50);
+    const bh = h * 0.2 + (i * 47 % (h * 0.45));
+    ctx.fillStyle = `hsl(${220 + i * 5},30%,${6 + i % 8}%)`;
+    ctx.fillRect(bx, h - bh, bw, bh);
+
+    // Windows
+    for (let wy = h - bh + 10; wy < h - 10; wy += 15) {
+      for (let wx = bx + 5; wx < bx + bw - 5; wx += 12) {
+        const on = Math.sin(t * 0.3 + wx + wy) > 0.4;
+        if (on) {
+          const hue = 30 + (i * 37 % 60);
+          ctx.fillStyle = `rgba(${200 + (i%3)*20},${160 + (i%4)*15},${60 + (i%5)*20},0.8)`;
+          ctx.fillRect(wx, wy, 6, 8);
+        }
+      }
+    }
+  }
+
+  // Street level / reflection
+  const street = ctx.createLinearGradient(0, h * 0.75, 0, h);
+  street.addColorStop(0, 'rgba(5,10,25,0.9)');
+  street.addColorStop(1, '#010305');
+  ctx.fillStyle = street;
+  ctx.fillRect(0, h * 0.75, w, h * 0.25);
+
+  // Neon reflections in wet street
+  for (let i = 0; i < 10; i++) {
+    const rx = (i / 9) * w;
+    const colors = ['#ff0080','#00c8ff','#80ff00','#ff8000'];
+    const c = colors[i % colors.length];
+    const refHeight = 40 + (i * 13 % 40);
+    const alpha = 0.15 + 0.1 * Math.sin(t * 2 + i);
+    ctx.fillStyle = c + Math.round(alpha * 255).toString(16).padStart(2,'0');
+    ctx.fillRect(rx - 3, h - refHeight, 6, refHeight);
+  }
+}
+
+function renderJapaneseCafe(ctx, w, h, t) {
+  // Warm paper/tatami color
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#1a0f05');
+  bg.addColorStop(0.4, '#251508');
+  bg.addColorStop(1, '#0d0804');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Shoji screen (paper window)
+  const shojiX = w * 0.55;
+  const shojiW = w * 0.35;
+  const shojiH = h * 0.6;
+  const shojiY = h * 0.12;
+
+  // Warm glow through shoji
+  const shojiGlow = ctx.createRadialGradient(shojiX + shojiW / 2, shojiY + shojiH / 2, 0, shojiX + shojiW / 2, shojiY + shojiH / 2, shojiW * 0.8);
+  shojiGlow.addColorStop(0, `rgba(255,220,150,${0.15 + 0.05 * Math.sin(t * 0.3)})`);
+  shojiGlow.addColorStop(1, 'transparent');
+  ctx.fillStyle = shojiGlow;
+  ctx.fillRect(0, 0, w, h);
+
+  // Shoji panels
+  ctx.fillStyle = `rgba(240,220,170,${0.12 + 0.03 * Math.sin(t * 0.5)})`;
+  ctx.fillRect(shojiX, shojiY, shojiW, shojiH);
+  ctx.strokeStyle = 'rgba(80,50,20,0.6)';
+  ctx.lineWidth = 2;
+  // Grid lines
+  for (let gx = shojiX; gx <= shojiX + shojiW; gx += shojiW / 4) {
+    ctx.beginPath(); ctx.moveTo(gx, shojiY); ctx.lineTo(gx, shojiY + shojiH); ctx.stroke();
+  }
+  for (let gy = shojiY; gy <= shojiY + shojiH; gy += shojiH / 5) {
+    ctx.beginPath(); ctx.moveTo(shojiX, gy); ctx.lineTo(shojiX + shojiW, gy); ctx.stroke();
+  }
+
+  // Cherry blossom silhouette (faint)
+  ctx.fillStyle = 'rgba(180,80,80,0.08)';
+  for (let i = 0; i < 6; i++) {
+    const px = w * 0.08 + i * 20;
+    const py = h * 0.2 + Math.sin(i) * 20;
+    ctx.beginPath(); ctx.arc(px, py, 15 + i * 5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Desk area
+  ctx.fillStyle = 'rgba(40,20,8,0.9)';
+  ctx.fillRect(0, h * 0.72, w * 0.45, 10);
+  ctx.fillRect(w * 0.05, h * 0.72, 8, h * 0.28);
+  ctx.fillRect(w * 0.38, h * 0.72, 8, h * 0.28);
+
+  // Tea cup
+  ctx.fillStyle = 'rgba(180,120,60,0.5)';
+  ctx.beginPath(); ctx.ellipse(w * 0.2, h * 0.7, 15, 8, 0, 0, Math.PI * 2); ctx.fill();
+  // Steam
+  for (let s = 0; s < 3; s++) {
+    ctx.strokeStyle = `rgba(255,220,180,${0.2 + 0.1 * Math.sin(t * 2 + s)})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    const sx = w * 0.18 + s * 5;
+    ctx.moveTo(sx, h * 0.68);
+    ctx.bezierCurveTo(sx - 3, h * 0.65, sx + 3, h * 0.62, sx, h * 0.58);
+    ctx.stroke();
+  }
+
+  // Floating cherry blossom petals
+  for (let i = 0; i < 8; i++) {
+    const px = ((i * 137 + t * 10 * (1 + i * 0.1)) % w);
+    const py = (h * 0.1 + (i * 73 + t * 15) % (h * 0.8));
+    const alpha = 0.2 + 0.2 * Math.sin(t + i);
+    ctx.fillStyle = `rgba(220,140,160,${alpha})`;
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(t + i);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 6, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function animateScene() {
+  time += 0.016;
+  if (canvas.width > 0 && canvas.height > 0) {
+    currentScene.render(ctx, canvas.width, canvas.height, time);
+  }
+  animFrame = requestAnimationFrame(animateScene);
+}
+
+function switchScene(scene) {
+  currentScene = scene;
+  // Update sidebar thumbs
+  document.querySelectorAll('.scene-thumb').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === scene.id);
+  });
+  // Update rain effect
+  const overlay = document.getElementById('scene-overlay');
+  overlay.innerHTML = '';
+  if (scene.rainEffect) addRainDrops(overlay);
+  if (scene.particles) addParticles(overlay);
+  showToast(`🎨 ${scene.name}`, 'info');
+}
+
+function addRainDrops(container) {
+  for (let i = 0; i < 60; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'rain-drop';
+    const x = Math.random() * 100;
+    const delay = Math.random() * 3;
+    const duration = 0.5 + Math.random() * 1;
+    const height = 15 + Math.random() * 25;
+    drop.style.cssText = `left:${x}%;height:${height}px;animation-duration:${duration}s;animation-delay:${delay}s;top:-${height}px;`;
+    container.appendChild(drop);
+  }
+}
+
+function addParticles(container) {
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 2 + Math.random() * 3;
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const tx = (Math.random() - 0.5) * 80;
+    const ty = (Math.random() - 0.5) * 80;
+    const color = currentScene.id === 'forest' ? '120,220,100' : '255,200,100';
+    const dur = 3 + Math.random() * 6;
+    const delay = Math.random() * 5;
+    p.style.cssText = `left:${x}%;top:${y}%;width:${size}px;height:${size}px;background:rgba(${color},0.8);--tx:${tx}px;--ty:${ty}px;animation-duration:${dur}s;animation-delay:${delay}s;box-shadow:0 0 ${size*2}px rgba(${color},0.6);`;
+    container.appendChild(p);
+  }
+}
+
+// Build scene thumbnails
+function buildSceneThumbs() {
+  const container = document.getElementById('scene-thumbs');
+  const themeGrid = document.getElementById('theme-grid');
+  container.innerHTML = '';
+  themeGrid.innerHTML = '';
+
+  SCENES.forEach(scene => {
+    // Sidebar thumb
+    const thumb = document.createElement('div');
+    thumb.className = 'scene-thumb' + (scene.id === currentScene.id ? ' active' : '');
+    thumb.dataset.id = scene.id;
+    thumb.onclick = () => switchScene(scene);
+    const tc = document.createElement('canvas');
+    tc.width = 100; tc.height = 56;
+    scene.render(tc.getContext('2d'), 100, 56, 2);
+    const lbl = document.createElement('div');
+    lbl.className = 'scene-thumb-label';
+    lbl.textContent = scene.name;
+    thumb.appendChild(tc); thumb.appendChild(lbl);
+    container.appendChild(thumb);
+
+    // Theme modal card
+    const card = document.createElement('div');
+    card.className = 'theme-card' + (scene.id === currentScene.id ? ' active' : '');
+    card.onclick = () => { switchScene(scene); buildSceneThumbs(); closeThemeModal(); };
+    const preview = document.createElement('div');
+    preview.className = 'theme-preview';
+    const pc = document.createElement('canvas');
+    pc.width = 260; pc.height = 100;
+    scene.render(pc.getContext('2d'), 260, 100, 2);
+    preview.appendChild(pc);
+    const badge = document.createElement('div');
+    badge.className = 'theme-active-badge';
+    badge.textContent = 'ACTIVE';
+    preview.appendChild(badge);
+    const body = document.createElement('div');
+    body.className = 'theme-card-body';
+    body.innerHTML = `<div class="theme-card-name">${scene.icon} ${scene.name}</div><div class="theme-card-desc">${scene.desc}</div>`;
+    card.appendChild(preview); card.appendChild(body);
+    themeGrid.appendChild(card);
+  });
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+let currentAuthTab = 'login';
+
+function switchAuthTab(tab, btn) {
+  currentAuthTab = tab;
+  document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function doAuth() {
+  document.getElementById('auth-panel').style.display = 'none';
+  const app = document.getElementById('app');
+  app.style.opacity = '1';
+  showToast('👋 Welcome back, Sarah!', 'success');
+  updateGreeting();
+}
+
+// ============================================================
+// POMODORO TIMER
+// ============================================================
+let timerFocus = 25, timerBreak = 5;
+let timerSeconds = 25 * 60;
+let timerTotal = 25 * 60;
+let timerRunning = false;
+let timerInterval = null;
+let timerPhase = 'FOCUS'; // FOCUS | BREAK
+let timerSession = 1;
+
+function setTimerPreset(focus, brk, tabEl) {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerFocus = focus; timerBreak = brk;
+  timerPhase = 'FOCUS';
+  timerSeconds = focus * 60;
+  timerTotal = focus * 60;
+  updateTimerDisplay();
+  document.getElementById('timer-playbtn').textContent = '▶';
+  document.getElementById('focus-play-btn').textContent = '▶';
+  if (tabEl) {
+    document.querySelectorAll('.timer-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+  }
+  showToast(`⏱ Timer set: ${focus}min focus / ${brk}min break`, 'info');
+}
+
+function openCustomTimer(tabEl) {
+  const f = parseInt(prompt('Focus minutes:', timerFocus)) || timerFocus;
+  const b = parseInt(prompt('Break minutes:', timerBreak)) || timerBreak;
+  setTimerPreset(f, b, tabEl);
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timer-playbtn').textContent = '▶';
+    document.getElementById('focus-play-btn').textContent = '▶';
+  } else {
+    timerRunning = true;
+    document.getElementById('timer-playbtn').textContent = '⏸';
+    document.getElementById('focus-play-btn').textContent = '⏸';
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      if (timerSeconds < 0) {
+        // Phase switch
+        if (timerPhase === 'FOCUS') {
+          timerPhase = 'BREAK';
+          timerSeconds = timerBreak * 60;
+          timerTotal = timerBreak * 60;
+          showToast(`☕ Break time! ${timerBreak} minutes`, 'success');
+        } else {
+          timerPhase = 'FOCUS';
+          timerSeconds = timerFocus * 60;
+          timerTotal = timerFocus * 60;
+          timerSession = Math.min(timerSession + 1, 4);
+          updateSessionDots();
+          showToast(`🎯 Focus session ${timerSession} starting!`, 'info');
+        }
+      }
+      updateTimerDisplay();
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerPhase = 'FOCUS';
+  timerSeconds = timerFocus * 60;
+  timerTotal = timerFocus * 60;
+  updateTimerDisplay();
+  document.getElementById('timer-playbtn').textContent = '▶';
+  document.getElementById('focus-play-btn').textContent = '▶';
+}
+
+function skipTimer() {
+  if (timerPhase === 'FOCUS') {
+    timerPhase = 'BREAK';
+    timerSeconds = timerBreak * 60;
+    timerTotal = timerBreak * 60;
+  } else {
+    timerPhase = 'FOCUS';
+    timerSeconds = timerFocus * 60;
+    timerTotal = timerFocus * 60;
+  }
+  updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const ts = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  document.getElementById('timer-display').textContent = ts;
+  document.getElementById('focus-timer-display').textContent = ts;
+  document.getElementById('timer-phase').textContent = timerPhase;
+
+  // Ring progress
+  const pct = timerSeconds / timerTotal;
+  const circumference = 2 * Math.PI * 70;
+  const offset = circumference * (1 - pct);
+  document.getElementById('timer-ring').style.strokeDashoffset = offset;
+
+  // Color
+  const color = timerPhase === 'FOCUS' ? 'var(--accent)' : 'var(--sage)';
+  document.getElementById('timer-ring').style.stroke = color;
+  document.getElementById('timer-phase').style.color = timerPhase === 'FOCUS' ? 'var(--accent)' : 'var(--sage)';
+}
+
+function updateSessionDots() {
+  const dots = document.querySelectorAll('#timer-sessions .session-dot');
+  dots.forEach((dot, i) => {
+    dot.classList.remove('done', 'active');
+    if (i < timerSession - 1) dot.classList.add('done');
+    else if (i === timerSession - 1) dot.classList.add('active');
+  });
+}
+
+// ============================================================
+// MUSIC PLAYER
+// ============================================================
+const TRACKS = [
+  { name: 'Rainy Café Vibes', artist: 'Lo-Fi Study Beats', duration: '4:02' },
+  { name: 'Late Night Reading', artist: 'Chill Waves', duration: '3:47' },
+  { name: 'Autumn Study Session', artist: 'Lo-Fi Collective', duration: '5:14' },
+  { name: 'Soft Rain & Piano', artist: 'Ambient Dreams', duration: '4:33' },
+  { name: 'Tokyo Study Nights', artist: 'Japanese Lo-Fi', duration: '6:02' },
+  { name: 'Mountain Morning', artist: 'Nature Sounds + Beats', duration: '4:18' },
+  { name: 'Cozy Fireplace Jazz', artist: 'Mellow Gold', duration: '3:55' },
+  { name: 'Deep Forest Focus', artist: 'Zenith Sounds', duration: '5:30' },
+];
+
+let currentTrack = 0;
+let isPlaying = false;
+let progressPct = 35;
+let progressInterval = null;
+let shuffleOn = false, repeatOn = false;
+let playlistOpen = false;
+
+function buildPlaylists() {
+  ['playlist-panel', 'full-playlist'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = TRACKS.map((t, i) => `
+      <div class="playlist-item ${i === currentTrack ? 'active' : ''}" onclick="selectTrack(${i})">
+        <div class="playlist-num">${i === currentTrack && isPlaying ? '♪' : (i + 1)}</div>
+        <div class="playlist-track-name">${t.name}</div>
+        <div class="playlist-duration">${t.duration}</div>
+      </div>
+    `).join('');
+  });
+}
+
+// ============================================================
+// LO-FI MUSIC SYNTHESIZER — Web Audio API
+// Genuine lo-fi beats: chord pads + bass + melody + drums + vinyl crackle
+// ============================================================
+let musicCtx = null;
+let musicMasterGain = null;
+let musicMasterLPF = null;
+let musicNodes = [];
+let musicVolume = 0.7;
+
+const PROGRESSIONS = [
+  [[0,4,7,11],[9,12,16,19],[5,9,12,16],[7,11,14,17]],
+  [[9,12,16,19],[2,5,9,12],[7,11,14,17],[0,4,7,11]],
+  [[5,9,12,16],[4,7,11,14],[9,12,16,19],[2,5,9,12]],
+  [[2,6,9,13],[11,14,18,21],[7,11,14,18],[9,13,16,19]],
+  [[9,12,16],[5,9,12],[0,4,7],[7,11,14]],
+  [[0,4,7,11],[9,12,16,19],[5,9,12,16],[4,7,11,14]],
+  [[5,9,12,16],[10,14,17,20],[3,7,10,14],[0,3,7,10]],
+  [[2,5,9,12],[9,12,16,19],[7,10,14,17],[9,13,16,19]],
+];
+const ROOT_FREQS = [130.81,110,123.47,146.83,110,130.81,87.31,116.54];
+
+function getMusicCtx() {
+  if (!musicCtx) {
+    musicCtx = new (window.AudioContext || window.webkitAudioContext)();
+    musicMasterGain = musicCtx.createGain();
+    musicMasterLPF = musicCtx.createBiquadFilter();
+    musicMasterLPF.type = 'lowpass'; musicMasterLPF.frequency.value = 5000; musicMasterLPF.Q.value = 0.5;
+    musicMasterGain.connect(musicMasterLPF);
+    musicMasterLPF.connect(musicCtx.destination);
+    musicMasterGain.gain.value = musicVolume * 0.5;
+  }
+  if (musicCtx.state === 'suspended') musicCtx.resume();
+  return musicCtx;
+}
+
+function startLoFiTrack(trackIdx) {
+  stopLoFiTrack();
+  const ctx = getMusicCtx();
+  const prog = PROGRESSIONS[trackIdx % PROGRESSIONS.length];
+  const root = ROOT_FREQS[trackIdx % ROOT_FREQS.length];
+  const bpm = 70 + (trackIdx % 4) * 5;
+  const beatSec = 60 / bpm;
+  const chordDur = beatSec * 4;
+
+  // Vinyl crackle
+  const crBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+  const crData = crBuf.getChannelData(0);
+  for (let i = 0; i < crData.length; i++) crData[i] = (Math.random()*2-1) * (Math.random()<0.004?1:0.008);
+  const crSrc = ctx.createBufferSource(); crSrc.buffer = crBuf; crSrc.loop = true;
+  const crGain = ctx.createGain(); crGain.gain.value = 0.016;
+  crSrc.connect(crGain); crGain.connect(musicMasterGain); crSrc.start();
+  musicNodes.push(crSrc, crGain);
+
+  function playChord(semitones, when, dur) {
+    semitones.forEach((semi, i) => {
+      const freq = root * Math.pow(2, semi / 12);
+      const osc = ctx.createOscillator();
+      osc.type = i % 2 === 0 ? 'triangle' : 'sine';
+      osc.frequency.value = freq;
+      osc.detune.value = (Math.random()-0.5)*14;
+      const env = ctx.createGain();
+      env.gain.setValueAtTime(0, when);
+      env.gain.linearRampToValueAtTime(0.055, when+0.1);
+      env.gain.setValueAtTime(0.05, when+dur*0.75);
+      env.gain.linearRampToValueAtTime(0, when+dur);
+      const lpf = ctx.createBiquadFilter(); lpf.type='lowpass'; lpf.frequency.value=1000+i*180;
+      osc.connect(lpf); lpf.connect(env); env.connect(musicMasterGain);
+      osc.start(when); osc.stop(when+dur+0.1);
+      musicNodes.push(osc,env,lpf);
+    });
+  }
+
+  function playBass(semi, when) {
+    const freq = (root/2) * Math.pow(2, semi/12);
+    const osc = ctx.createOscillator(); osc.type='triangle'; osc.frequency.value=freq;
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0,when); env.gain.linearRampToValueAtTime(0.2,when+0.04);
+    env.gain.exponentialRampToValueAtTime(0.07,when+0.35); env.gain.exponentialRampToValueAtTime(0.001,when+beatSec*3.8);
+    const lpf = ctx.createBiquadFilter(); lpf.type='lowpass'; lpf.frequency.value=260;
+    osc.connect(lpf); lpf.connect(env); env.connect(musicMasterGain);
+    osc.start(when); osc.stop(when+beatSec*4);
+    musicNodes.push(osc,env,lpf);
+  }
+
+  const PENTA = [0,2,4,7,9];
+  function playMelody(baseFreq, when) {
+    const deg = PENTA[Math.floor(Math.random()*PENTA.length)];
+    const freq = baseFreq * Math.pow(2, deg/12) * (Math.random()<0.25?2:1);
+    const osc = ctx.createOscillator(); osc.type='sine'; osc.frequency.value=freq;
+    osc.detune.value = (Math.random()-0.5)*22;
+    const dur = beatSec*(0.28+Math.random()*0.45);
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0,when); env.gain.linearRampToValueAtTime(0.065,when+0.018);
+    env.gain.exponentialRampToValueAtTime(0.001,when+dur);
+    osc.connect(env); env.connect(musicMasterGain);
+    osc.start(when); osc.stop(when+dur+0.05);
+    musicNodes.push(osc,env);
+  }
+
+  function playKick(when) {
+    const osc = ctx.createOscillator(); osc.type='sine';
+    osc.frequency.setValueAtTime(160,when); osc.frequency.exponentialRampToValueAtTime(38,when+0.13);
+    const env = ctx.createGain(); env.gain.setValueAtTime(0.55,when); env.gain.exponentialRampToValueAtTime(0.001,when+0.2);
+    osc.connect(env); env.connect(musicMasterGain); osc.start(when); osc.stop(when+0.22);
+    musicNodes.push(osc,env);
+  }
+
+  function playSnare(when) {
+    const nb = ctx.createBuffer(1,ctx.sampleRate*0.15,ctx.sampleRate);
+    const nd = nb.getChannelData(0); for(let i=0;i<nd.length;i++) nd[i]=Math.random()*2-1;
+    const src = ctx.createBufferSource(); src.buffer=nb;
+    const hp = ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=2200;
+    const env = ctx.createGain(); env.gain.setValueAtTime(0.14,when); env.gain.exponentialRampToValueAtTime(0.001,when+0.11);
+    const snap = ctx.createOscillator(); snap.type='triangle'; snap.frequency.value=195;
+    const sEnv = ctx.createGain(); sEnv.gain.setValueAtTime(0.07,when); sEnv.gain.exponentialRampToValueAtTime(0.001,when+0.045);
+    snap.connect(sEnv); sEnv.connect(musicMasterGain); snap.start(when); snap.stop(when+0.055);
+    src.connect(hp); hp.connect(env); env.connect(musicMasterGain); src.start(when);
+    musicNodes.push(src,hp,env,snap,sEnv);
+  }
+
+  function playHat(when, open=false) {
+    const nb = ctx.createBuffer(1,ctx.sampleRate*(open?0.22:0.045),ctx.sampleRate);
+    const nd = nb.getChannelData(0); for(let i=0;i<nd.length;i++) nd[i]=Math.random()*2-1;
+    const src = ctx.createBufferSource(); src.buffer=nb;
+    const hp = ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=7500;
+    const env = ctx.createGain(); env.gain.setValueAtTime(open?0.038:0.055,when); env.gain.exponentialRampToValueAtTime(0.001,when+(open?0.18:0.038));
+    src.connect(hp); hp.connect(env); env.connect(musicMasterGain); src.start(when);
+    musicNodes.push(src,hp,env);
+  }
+
+  const loopDur = chordDur * prog.length;
+  const loopStart = ctx.currentTime + 0.08;
+
+  function scheduleLoop(startTime) {
+    prog.forEach((chord, ci) => {
+      const cStart = startTime + ci * chordDur;
+      playChord(chord, cStart, chordDur*0.95);
+      playBass(chord[0], cStart);
+      if (chord.length>1) playBass(chord[1]-7, cStart+beatSec*2);
+      if (ci%2===0) {
+        const mRoot = root * Math.pow(2, chord[0]/12) * 2;
+        for (let b=0;b<4;b++) if(Math.random()<0.5) playMelody(mRoot, cStart+b*beatSec+Math.random()*beatSec*0.25);
+      }
+      for (let b=0;b<4;b++) {
+        const bt = cStart + b*beatSec;
+        if (b===0||(b===2&&Math.random()<0.65)) playKick(bt);
+        if (b===1||b===3) playSnare(bt + (b===3?beatSec*0.018:0));
+        playHat(bt);
+        if (Math.random()<0.55) playHat(bt+beatSec*0.5);
+        if (Math.random()<0.22) playHat(bt+beatSec*0.25, true);
+      }
+    });
+    const nextStart = startTime + loopDur;
+    const delay = (nextStart - ctx.currentTime - 0.4) * 1000;
+    const tid = setTimeout(() => { if (isPlaying) scheduleLoop(nextStart); }, Math.max(0, delay));
+    musicNodes._loopTid = tid;
+  }
+  scheduleLoop(loopStart);
+}
+
+function stopLoFiTrack() {
+  if (musicNodes._loopTid) clearTimeout(musicNodes._loopTid);
+  if (musicCtx && musicMasterGain) {
+    musicMasterGain.gain.setTargetAtTime(0, musicCtx.currentTime, 0.25);
+    setTimeout(() => {
+      musicNodes.forEach(n => { try { if(n.stop) n.stop(); n.disconnect(); } catch(e){} });
+      musicNodes = [];
+      if (musicMasterGain) musicMasterGain.gain.value = musicVolume * 0.5;
+    }, 500);
+  } else { musicNodes = []; }
+}
+
+function togglePlay() {
+  isPlaying = !isPlaying;
+  const btn = document.getElementById('play-btn');
+  btn.textContent = isPlaying ? '⏸' : '▶';
+  const vinyl = document.getElementById('vinyl-disc');
+  vinyl.classList.toggle('spinning', isPlaying);
+
+  if (isPlaying) {
+    startLoFiTrack(currentTrack);
+    progressInterval = setInterval(() => {
+      progressPct += 0.05;
+      if (progressPct >= 100) nextTrack();
+      updateProgress();
+    }, 100);
+  } else {
+    stopLoFiTrack();
+    clearInterval(progressInterval);
+  }
+  buildPlaylists();
+}
+
+function updateProgress() {
+  const fill = document.getElementById('progress-fill');
+  if (fill) fill.style.width = progressPct + '%';
+  // Fake time calc from duration
+  const dur = TRACKS[currentTrack].duration.split(':');
+  const total = parseInt(dur[0]) * 60 + parseInt(dur[1]);
+  const current = Math.floor(total * progressPct / 100);
+  const cm = Math.floor(current / 60);
+  const cs = current % 60;
+  const el = document.getElementById('p-current');
+  if (el) el.textContent = `${cm}:${cs.toString().padStart(2,'0')}`;
+  const de = document.getElementById('p-duration');
+  if (de) de.textContent = TRACKS[currentTrack].duration;
+}
+
+function selectTrack(i) {
+  const wasPlaying = isPlaying;
+  if (isPlaying) { stopLoFiTrack(); clearInterval(progressInterval); isPlaying = false; }
+  currentTrack = i;
+  progressPct = 0;
+  document.getElementById('track-name').textContent = TRACKS[i].name;
+  document.getElementById('track-artist').textContent = TRACKS[i].artist;
+  document.getElementById('vinyl-disc').classList.remove('spinning');
+  document.getElementById('play-btn').textContent = '▶';
+  updateProgress();
+  buildPlaylists();
+  if (wasPlaying) setTimeout(() => togglePlay(), 150);
+}
+
+function nextTrack() {
+  if (shuffleOn) currentTrack = Math.floor(Math.random() * TRACKS.length);
+  else currentTrack = (currentTrack + 1) % TRACKS.length;
+  progressPct = 0;
+  document.getElementById('track-name').textContent = TRACKS[currentTrack].name;
+  document.getElementById('track-artist').textContent = TRACKS[currentTrack].artist;
+  updateProgress(); buildPlaylists();
+  if (isPlaying) { stopLoFiTrack(); setTimeout(() => startLoFiTrack(currentTrack), 100); }
+}
+
+function prevTrack() {
+  currentTrack = (currentTrack - 1 + TRACKS.length) % TRACKS.length;
+  progressPct = 0;
+  document.getElementById('track-name').textContent = TRACKS[currentTrack].name;
+  document.getElementById('track-artist').textContent = TRACKS[currentTrack].artist;
+  updateProgress(); buildPlaylists();
+  if (isPlaying) { stopLoFiTrack(); setTimeout(() => startLoFiTrack(currentTrack), 100); }
+}
+
+function playerShuffle() {
+  shuffleOn = !shuffleOn;
+  document.getElementById('shuffle-btn').classList.toggle('active', shuffleOn);
+  showToast(shuffleOn ? '🔀 Shuffle on' : '🔀 Shuffle off', 'info');
+}
+
+function playerRepeat() {
+  repeatOn = !repeatOn;
+  document.getElementById('repeat-btn').classList.toggle('active', repeatOn);
+  showToast(repeatOn ? '🔁 Repeat on' : '🔁 Repeat off', 'info');
+}
+
+function togglePlaylist() {
+  playlistOpen = !playlistOpen;
+  document.getElementById('playlist-panel').classList.toggle('show', playlistOpen);
+  document.getElementById('playlist-toggle-btn').style.color = playlistOpen ? 'var(--accent)' : '';
+}
+
+function seekTo(e) {
+  const bar = e.currentTarget;
+  const rect = bar.getBoundingClientRect();
+  progressPct = ((e.clientX - rect.left) / rect.width) * 100;
+  updateProgress();
+}
+
+function setMusicVolume(v) {
+  musicVolume = parseInt(v) / 100;
+  if (musicMasterGain) {
+    musicMasterGain.gain.setTargetAtTime(musicVolume * 0.5, getMusicCtx().currentTime, 0.05);
+  }
+}
+
+// ============================================================
+// AMBIENT SOUNDS v2 — Premium Nature Sound Synthesis
+// Deeply layered, perceptually accurate Web Audio synthesis
+// ============================================================
+
+const SOUNDS = [
+  { id: 'rain',      name: 'Rain',      icon: '🌧️' },
+  { id: 'thunder',   name: 'Thunder',   icon: '⛈️' },
+  { id: 'forest',    name: 'Forest',    icon: '🌲' },
+  { id: 'birds',     name: 'Birds',     icon: '🐦' },
+  { id: 'river',     name: 'River',     icon: '🏞️' },
+  { id: 'ocean',     name: 'Ocean',     icon: '🌊' },
+  { id: 'wind',      name: 'Wind',      icon: '💨' },
+  { id: 'fireplace', name: 'Fireplace', icon: '🔥' },
+];
+
+let audioCtx = null;
+let activeSounds = {};
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// ── Generate a long unique noise buffer (avoids loop artifacts) ──
+function makeNoiseBuffer(ctx, seconds = 8) {
+  const sr = ctx.sampleRate;
+  const buf = ctx.createBuffer(2, sr * seconds, sr);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch);
+    // Pink-ish noise: integrate white noise for warmer spectrum
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for (let i = 0; i < d.length; i++) {
+      const wh = Math.random() * 2 - 1;
+      b0 = 0.99886*b0 + wh*0.0555179; b1 = 0.99332*b1 + wh*0.0750759;
+      b2 = 0.96900*b2 + wh*0.1538520; b3 = 0.86650*b3 + wh*0.3104856;
+      b4 = 0.55000*b4 + wh*0.5329522; b5 = -0.7616*b5 - wh*0.0168980;
+      d[i] = (b0+b1+b2+b3+b4+b5+b6+wh*0.5362) * 0.11;
+      b6 = wh * 0.115926;
+    }
+  }
+  return buf;
+}
+
+function makeWhiteBuffer(ctx, seconds = 6) {
+  const sr = ctx.sampleRate;
+  const buf = ctx.createBuffer(2, sr * seconds, sr);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  return buf;
+}
+
+function makeNoiseSrc(ctx, pink = true) {
+  const src = ctx.createBufferSource();
+  src.buffer = pink ? makeNoiseBuffer(ctx) : makeWhiteBuffer(ctx);
+  src.loop = true;
+  return src;
+}
+
+// ── Utility: create a gain-controlled LFO ──
+function makeLFO(ctx, freq, depth, target) {
+  const lfo = ctx.createOscillator();
+  const lfoG = ctx.createGain();
+  lfo.type = 'sine'; lfo.frequency.value = freq;
+  lfoG.gain.value = depth;
+  lfo.connect(lfoG); lfoG.connect(target);
+  lfo.start();
+  return [lfo, lfoG];
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🌧️  RAIN  — Three perceptual layers: heavy drops, mid shower, fine mist
+// ══════════════════════════════════════════════════════════════
+function startRain(ctx, out) {
+  const nodes = [];
+
+  // Layer 1: Heavy low-freq impact of drops on surfaces
+  const heavy = makeNoiseSrc(ctx, true);
+  const hLP = ctx.createBiquadFilter(); hLP.type = 'lowpass';  hLP.frequency.value = 600; hLP.Q.value = 0.5;
+  const hHP = ctx.createBiquadFilter(); hHP.type = 'highpass'; hHP.frequency.value = 80;
+  const hG  = ctx.createGain(); hG.gain.value = 0.55;
+  heavy.connect(hLP); hLP.connect(hHP); hHP.connect(hG); hG.connect(out);
+  heavy.start(); nodes.push(heavy, hLP, hHP, hG);
+
+  // Layer 2: Mid-band shower body — the classic "rain" sound
+  const mid = makeNoiseSrc(ctx, false);
+  const mBP1 = ctx.createBiquadFilter(); mBP1.type = 'bandpass'; mBP1.frequency.value = 1100; mBP1.Q.value = 0.7;
+  const mBP2 = ctx.createBiquadFilter(); mBP2.type = 'bandpass'; mBP2.frequency.value = 1800; mBP2.Q.value = 0.9;
+  const mG   = ctx.createGain(); mG.gain.value = 0.45;
+  // Slow swell LFO — rain intensity fluctuates naturally
+  const [lfo1, lg1] = makeLFO(ctx, 0.07, 0.18, mG.gain);
+  mid.connect(mBP1); mBP1.connect(mBP2); mBP2.connect(mG); mG.connect(out);
+  mid.start(); nodes.push(mid, mBP1, mBP2, mG, lfo1, lg1);
+
+  // Layer 3: High-freq mist / drizzle hiss
+  const mist = makeNoiseSrc(ctx, false);
+  const misHP = ctx.createBiquadFilter(); misHP.type = 'highpass'; misHP.frequency.value = 4000;
+  const misLP = ctx.createBiquadFilter(); misLP.type = 'lowpass';  misLP.frequency.value = 9000;
+  const misG  = ctx.createGain(); misG.gain.value = 0.12;
+  const [lfo2, lg2] = makeLFO(ctx, 0.13, 0.06, misG.gain);
+  mist.connect(misHP); misHP.connect(misLP); misLP.connect(misG); misG.connect(out);
+  mist.start(); nodes.push(mist, misHP, misLP, misG, lfo2, lg2);
+
+  // Layer 4: Individual drip ticks — tonal transients on a surface
+  function drip() {
+    const osc = ctx.createOscillator();
+    const env = ctx.createGain();
+    const freq = 800 + Math.random() * 1200;
+    osc.type = 'sine'; osc.frequency.value = freq;
+    osc.frequency.exponentialRampToValueAtTime(freq * 0.6, ctx.currentTime + 0.04);
+    env.gain.setValueAtTime(0.06 + Math.random() * 0.05, ctx.currentTime);
+    env.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05 + Math.random() * 0.04);
+    osc.connect(env); env.connect(out);
+    osc.start(); osc.stop(ctx.currentTime + 0.1);
+    nodes.push(osc, env);
+  }
+  drip();
+  const sched = () => {
+    const t = setTimeout(() => { if (activeSounds.rain) { drip(); sched(); } }, 60 + Math.random() * 220);
+    nodes._tid = t;
+  };
+  sched();
+  return nodes;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ⛈️  THUNDER  — Realistic layered rumble with distant/close variants
+// ══════════════════════════════════════════════════════════════
+function startThunder(ctx, out) {
+  const nodes = [];
+
+  // Constant very quiet far-rain bed
+  const bed = makeNoiseSrc(ctx, true);
+  const bedLP = ctx.createBiquadFilter(); bedLP.type = 'lowpass'; bedLP.frequency.value = 300;
+  const bedG  = ctx.createGain(); bedG.gain.value = 0.08;
+  bed.connect(bedLP); bedLP.connect(bedG); bedG.connect(out);
+  bed.start(); nodes.push(bed, bedLP, bedG);
+
+  function boom(isClose) {
+    const now = ctx.currentTime;
+    // Sub-bass thump
+    const sub = ctx.createOscillator(); sub.type = 'sine';
+    sub.frequency.setValueAtTime(isClose ? 55 : 35, now);
+    sub.frequency.exponentialRampToValueAtTime(isClose ? 18 : 12, now + (isClose ? 1.2 : 2.5));
+    const subE = ctx.createGain();
+    subE.gain.setValueAtTime(0, now);
+    subE.gain.linearRampToValueAtTime(isClose ? 0.85 : 0.45, now + 0.03);
+    subE.gain.exponentialRampToValueAtTime(0.001, now + (isClose ? 2.0 : 4.0));
+    sub.connect(subE); subE.connect(out); sub.start(now); sub.stop(now + 4.5);
+    nodes.push(sub, subE);
+
+    // Mid rumble — filtered noise
+    const rumNoise = makeNoiseSrc(ctx, true);
+    const rumLP1 = ctx.createBiquadFilter(); rumLP1.type='lowpass'; rumLP1.frequency.value = isClose ? 400 : 220;
+    const rumLP2 = ctx.createBiquadFilter(); rumLP2.type='lowpass'; rumLP2.frequency.value = isClose ? 250 : 140;
+    const rumE   = ctx.createGain();
+    rumE.gain.setValueAtTime(0, now);
+    rumE.gain.linearRampToValueAtTime(isClose ? 1.1 : 0.55, now + 0.05);
+    rumE.gain.setValueAtTime(isClose ? 0.9 : 0.45, now + (isClose ? 0.3 : 0.6));
+    rumE.gain.exponentialRampToValueAtTime(0.001, now + (isClose ? 3.5 : 6.0));
+    rumNoise.connect(rumLP1); rumLP1.connect(rumLP2); rumLP2.connect(rumE); rumE.connect(out);
+    rumNoise.start(now); rumNoise.stop(now + 7);
+    nodes.push(rumNoise, rumLP1, rumLP2, rumE);
+
+    // Initial crack (for close strikes)
+    if (isClose) {
+      const crk = makeNoiseSrc(ctx, false);
+      const crkHP = ctx.createBiquadFilter(); crkHP.type='highpass'; crkHP.frequency.value=2000;
+      const crkE  = ctx.createGain();
+      crkE.gain.setValueAtTime(0.5, now); crkE.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      crk.connect(crkHP); crkHP.connect(crkE); crkE.connect(out);
+      crk.start(now); crk.stop(now + 0.2);
+      nodes.push(crk, crkHP, crkE);
+    }
+
+    // Echo tail — reverb-like secondary noise burst
+    const echoDelay = isClose ? 0.4 : 1.2;
+    const echo = makeNoiseSrc(ctx, true);
+    const eLP = ctx.createBiquadFilter(); eLP.type='lowpass'; eLP.frequency.value=180;
+    const eE  = ctx.createGain();
+    eE.gain.setValueAtTime(0, now + echoDelay);
+    eE.gain.linearRampToValueAtTime(isClose ? 0.3 : 0.18, now + echoDelay + 0.1);
+    eE.gain.exponentialRampToValueAtTime(0.001, now + echoDelay + (isClose ? 2.0 : 3.5));
+    echo.connect(eLP); eLP.connect(eE); eE.connect(out);
+    echo.start(now); echo.stop(now + echoDelay + 4);
+    nodes.push(echo, eLP, eE);
+  }
+
+  boom(false);
+  const sched = () => {
+    const delay = 10000 + Math.random() * 18000;
+    const t = setTimeout(() => {
+      if (activeSounds.thunder) { boom(Math.random() < 0.35); sched(); }
+    }, delay);
+    nodes._tid = t;
+  };
+  sched();
+  return nodes;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🌲  FOREST  — Wind through canopy, leaves, rustling understory
+// ══════════════════════════════════════════════════════════════
+function startForest(ctx, out) {
+  const nodes = [];
+
+  // Layer 1: Deep canopy wind — very low freq whoosh
+  const canopy = makeNoiseSrc(ctx, true);
+  const cLP = ctx.createBiquadFilter(); cLP.type='lowpass';  cLP.frequency.value=300;
+  const cHP = ctx.createBiquadFilter(); cHP.type='highpass'; cHP.frequency.value=40;
+  const cG  = ctx.createGain(); cG.gain.value = 0.35;
+  // Slow gust cycle ~12 seconds
+  const [gustLFO, gustG] = makeLFO(ctx, 0.085, 0.22, cG.gain);
+  canopy.connect(cLP); cLP.connect(cHP); cHP.connect(cG); cG.connect(out);
+  canopy.start(); nodes.push(canopy, cLP, cHP, cG, gustLFO, gustG);
+
+  // Layer 2: Leaf rustle — mid-high narrow band
+  const leaves = makeNoiseSrc(ctx, false);
+  const lBP1 = ctx.createBiquadFilter(); lBP1.type='bandpass'; lBP1.frequency.value=2200; lBP1.Q.value=1.4;
+  const lBP2 = ctx.createBiquadFilter(); lBP2.type='bandpass'; lBP2.frequency.value=3500; lBP2.Q.value=2.0;
+  const lG   = ctx.createGain(); lG.gain.value = 0.22;
+  const [lLFO, lLG] = makeLFO(ctx, 0.22, 0.14, lG.gain);
+  leaves.connect(lBP1); lBP1.connect(lBP2); lBP2.connect(lG); lG.connect(out);
+  leaves.start(); nodes.push(leaves, lBP1, lBP2, lG, lLFO, lLG);
+
+  // Layer 3: Ground-level rustle (slightly different timing)
+  const ground = makeNoiseSrc(ctx, false);
+  const gBP = ctx.createBiquadFilter(); gBP.type='bandpass'; gBP.frequency.value=1400; gBP.Q.value=0.8;
+  const gG  = ctx.createGain(); gG.gain.value = 0.14;
+  const [gLFO, gLG] = makeLFO(ctx, 0.31, 0.10, gG.gain);
+  ground.connect(gBP); gBP.connect(gG); gG.connect(out);
+  ground.start(); nodes.push(ground, gBP, gG, gLFO, gLG);
+
+  // Layer 4: Distant wind sweeping — sweeping LP filter
+  const sweep = makeNoiseSrc(ctx, true);
+  const sweepBP = ctx.createBiquadFilter(); sweepBP.type='bandpass'; sweepBP.frequency.value=600; sweepBP.Q.value=0.6;
+  const sweepG  = ctx.createGain(); sweepG.gain.value = 0.18;
+  // Automate filter freq for "passing" gusts
+  const [sweepLFO, sweepLG] = makeLFO(ctx, 0.055, 280, sweepBP.frequency);
+  sweep.connect(sweepBP); sweepBP.connect(sweepG); sweepG.connect(out);
+  sweep.start(); nodes.push(sweep, sweepBP, sweepG, sweepLFO, sweepLG);
+
+  return nodes;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🐦  BIRDS  — Multiple species, realistic call patterns
+// ══════════════════════════════════════════════════════════════
+function startBirds(ctx, out) {
+  const nodes = [];
+
+  // Soft morning ambience underneath — high-passed pink noise
+  const amb = makeNoiseSrc(ctx, true);
+  const aHP = ctx.createBiquadFilter(); aHP.type='highpass'; aHP.frequency.value=1200;
+  const aLP = ctx.createBiquadFilter(); aLP.type='lowpass';  aLP.frequency.value=5000;
+  const aG  = ctx.createGain(); aG.gain.value = 0.045;
+  amb.connect(aHP); aHP.connect(aLP); aLP.connect(aG); aG.connect(out);
+  amb.start(); nodes.push(amb, aHP, aLP, aG);
+
+  // Bird call types — each with different singing style
+  const birdTypes = [
+    // Robin-like: rising then falling whistle
+    (now) => {
+      const notes = [2000,2600,2200,2800,2400];
+      notes.forEach((f, i) => {
+        const o = ctx.createOscillator(); o.type='sine';
+        const e = ctx.createGain();
+        const t = now + i*0.11;
+        o.frequency.setValueAtTime(f, t);
+        o.frequency.exponentialRampToValueAtTime(f*1.18, t+0.06);
+        e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(0.09,t+0.02);
+        e.gain.exponentialRampToValueAtTime(0.001,t+0.09);
+        o.connect(e); e.connect(out); o.start(t); o.stop(t+0.1);
+        nodes.push(o,e);
+      });
+    },
+    // Sparrow-like: rapid trill
+    (now) => {
+      const baseF = 3200 + Math.random()*600;
+      for (let i=0;i<8;i++) {
+        const o = ctx.createOscillator(); o.type='triangle';
+        const e = ctx.createGain();
+        const t = now + i*0.055;
+        const f = baseF + (i%2===0 ? 0 : 180);
+        o.frequency.value = f;
+        e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(0.07,t+0.01);
+        e.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+        o.connect(e); e.connect(out); o.start(t); o.stop(t+0.07);
+        nodes.push(o,e);
+      }
+    },
+    // Woodpecker-like: descending call + pause
+    (now) => {
+      [3800,3200,2700,2300].forEach((f,i) => {
+        const o = ctx.createOscillator(); o.type='sine';
+        const e = ctx.createGain();
+        const t = now + i*0.15;
+        o.frequency.setValueAtTime(f, t);
+        o.frequency.exponentialRampToValueAtTime(f*0.85, t+0.1);
+        e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(0.1,t+0.015);
+        e.gain.exponentialRampToValueAtTime(0.001,t+0.12);
+        o.connect(e); e.connect(out); o.start(t); o.stop(t+0.14);
+        nodes.push(o,e);
+      });
+    },
+    // Warbler-like: FM warble
+    (now) => {
+      const carrier = ctx.createOscillator(); carrier.type='sine';
+      const mod     = ctx.createOscillator(); mod.type='sine';
+      const modG    = ctx.createGain();
+      const env     = ctx.createGain();
+      const baseF   = 2400 + Math.random()*800;
+      carrier.frequency.value = baseF;
+      mod.frequency.value     = baseF * 1.5;
+      modG.gain.value         = baseF * 0.9;
+      mod.connect(modG); modG.connect(carrier.frequency);
+      env.gain.setValueAtTime(0,now);
+      env.gain.linearRampToValueAtTime(0.085,now+0.03);
+      env.gain.setValueAtTime(0.08,now+0.25);
+      env.gain.exponentialRampToValueAtTime(0.001,now+0.4);
+      carrier.connect(env); env.connect(out);
+      carrier.start(now); mod.start(now);
+      carrier.stop(now+0.45); mod.stop(now+0.45);
+      nodes.push(carrier,mod,modG,env);
+    },
+    // Distant coo — soft low call
+    (now) => {
+      [650,580,610,570].forEach((f,i) => {
+        const o = ctx.createOscillator(); o.type='sine';
+        const e = ctx.createGain();
+        const t = now + i*0.22;
+        o.frequency.setValueAtTime(f,t); o.frequency.exponentialRampToValueAtTime(f*0.92,t+0.18);
+        e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(0.07,t+0.04);
+        e.gain.exponentialRampToValueAtTime(0.001,t+0.2);
+        o.connect(e); e.connect(out); o.start(t); o.stop(t+0.22);
+        nodes.push(o,e);
+      });
+    }
+  ];
+
+  // Schedule a session of multiple birds singing at realistic intervals
+  function schedSession() {
+    const numBirds = 1 + Math.floor(Math.random()*3);
+    for (let b=0; b<numBirds; b++) {
+      const delay = b * (300 + Math.random()*800);
+      setTimeout(() => {
+        if (!activeSounds.birds) return;
+        const type = birdTypes[Math.floor(Math.random()*birdTypes.length)];
+        type(ctx.currentTime);
+        // Some birds repeat their call 2-3 times
+        if (Math.random()<0.4) setTimeout(()=>{ if(activeSounds.birds) type(ctx.currentTime); }, 600+Math.random()*400);
+        if (Math.random()<0.2) setTimeout(()=>{ if(activeSounds.birds) type(ctx.currentTime); }, 1200+Math.random()*600);
+      }, delay);
+    }
+    const nextSession = 2500 + Math.random() * 5000;
+    const t = setTimeout(() => { if (activeSounds.birds) schedSession(); }, nextSession);
+    nodes._tid = t;
+  }
+  schedSession();
+  return nodes;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🏞️  RIVER  — Babbling brook with rocks, splashes, flow
+// ══════════════════════════════════════════════════════════════
+function startRiver(ctx, out) {
+  const nodes = [];
+
+  // Base flow — continuous broadband water sound
+  const flow = makeNoiseSrc(ctx, false);
+  const fLP = ctx.createBiquadFilter(); fLP.type='lowpass';  fLP.frequency.value=3500;
+  const fHP = ctx.createBiquadFilter(); fHP.type='highpass'; fHP.frequency.value=200;
+  const fG  = ctx.createGain(); fG.gain.value = 0.38;
+  flow.connect(fLP); fLP.connect(fHP); fHP.connect(fG); fG.connect(out);
+  flow.start(); nodes.push(flow, fLP, fHP, fG);
+
+  // Babble texture — multiple narrow bandpass with independent LFOs
+  [[500,1.8,0.42,0.22],[900,2.2,0.65,0.18],[1500,1.6,0.88,0.15],[2400,1.3,0.55,0.10]].forEach(([f,Q,lfoF,vol]) => {
+    const n = makeNoiseSrc(ctx, false);
+    const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=f; bp.Q.value=Q;
+    const g  = ctx.createGain(); g.gain.value = vol;
+    const [lfo,lg] = makeLFO(ctx, lfoF, vol*0.55, g.gain);
+    // Also modulate the filter frequency slightly for burbling texture
+    const [fLFO,fLG] = makeLFO(ctx, lfoF*0.7, f*0.12, bp.frequency);
+    n.connect(bp); bp.connect(g); g.connect(out); n.start();
+    nodes.push(n,bp,g,lfo,lg,fLFO,fLG);
+  });
+
+  // Occasional splash — tonal transient with noise burst
+  function splash() {
+    const now = ctx.currentTime;
+    // Tonal component
+    const osc = ctx.createOscillator(); osc.type='sine';
+    osc.frequency.setValueAtTime(600+Math.random()*400, now);
+    osc.frequency.exponentialRampToValueAtTime(200, now+0.25);
+    const oEnv = ctx.createGain();
+    oEnv.gain.setValueAtTime(0.08+Math.random()*0.06, now);
+    oEnv.gain.exponentialRampToValueAtTime(0.001, now+0.3);
+    osc.connect(oEnv); oEnv.connect(out); osc.start(now); osc.stop(now+0.35);
+    // Noise component
+    const sn = makeNoiseSrc(ctx, false);
+    const snBP = ctx.createBiquadFilter(); snBP.type='bandpass'; snBP.frequency.value=2000; snBP.Q.value=1;
+    const snE  = ctx.createGain();
+    snE.gain.setValueAtTime(0.06, now); snE.gain.exponentialRampToValueAtTime(0.001, now+0.18);
+    sn.connect(snBP); snBP.connect(snE); snE.connect(out); sn.start(now); sn.stop(now+0.2);
+    nodes.push(osc,oEnv,sn,snBP,snE);
+  }
+  splash();
+  const sched = () => {
+    const t = setTimeout(() => { if(activeSounds.river){ splash(); sched(); } }, 800+Math.random()*2200);
+    nodes._tid = t;
+  };
+  sched();
+  return nodes;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🌊  OCEAN  — Crashing waves with surf, foam, underwater depth
+// ══════════════════════════════════════════════════════════════
+function startOcean(ctx, out) {
+  const nodes = [];
+
+  // Deep ocean rumble — sub-bass presence
+  const deep = makeNoiseSrc(ctx, true);
+  const dLP = ctx.createBiquadFilter(); dLP.type='lowpass'; dLP.frequency.value=120; dLP.Q.value=0.4;
+  const dG  = ctx.createGain(); dG.gain.value = 0.50;
+  const [dLFO,dLG] = makeLFO(ctx, 0.09, 0.28, dG.gain); // slow deep swell
+  deep.connect(dLP); dLP.connect(dG); dG.connect(out);
+  deep.start(); nodes.push(deep,dLP,dG,dLFO,dLG);
+
+  // Mid wave body — the main wave sound
+  const wave = makeNoiseSrc(ctx, false);
+  const wLP = ctx.createBiquadFilter(); wLP.type='lowpass';  wLP.frequency.value=900;
+  const wHP = ctx.createBiquadFilter(); wHP.type='highpass'; wHP.frequency.value=80;
+  const wG  = ctx.createGain(); wG.gain.value = 0.0; // driven entirely by LFO
+
+  // Wave rhythm LFO — ~7 second period, asymmetric (crash fast, recede slow)
+  // Use a custom wave shape via ScriptProcessor-like approach with oscillator + gain shaping
+  const waveLFO  = ctx.createOscillator(); waveLFO.type='sine'; waveLFO.frequency.value=0.143;
+  const waveGain = ctx.createGain(); waveGain.gain.value = 0.55;
+  const waveBase = ctx.createGain(); waveBase.gain.value = 0.58;
+  waveLFO.connect(waveGain); waveGain.connect(waveBase.gain); waveLFO.start();
+  wave.connect(wLP); wLP.connect(wHP); wHP.connect(waveBase); waveBase.connect(out);
+  wave.start(); nodes.push(wave,wLP,wHP,waveBase,waveLFO,waveGain);
+
+  // Surf hiss — high-freq foam rushing up the beach
+  const surf = makeNoiseSrc(ctx, false);
+  const sHP = ctx.createBiquadFilter(); sHP.type='highpass'; sHP.frequency.value=3000;
+  const sLP = ctx.createBiquadFilter(); sLP.type='lowpass';  sLP.frequency.value=8000;
+  const sG  = ctx.createGain(); sG.gain.value=0.0;
+  const surfLFO  = ctx.createOscillator(); surfLFO.type='sine'; surfLFO.frequency.value=0.143;
+  const surfGain = ctx.createGain(); surfGain.gain.value=0.12;
+  const surfBase = ctx.createGain(); surfBase.gain.value=0.13;
+  surfLFO.connect(surfGain); surfGain.connect(surfBase.gain); surfLFO.start();
+  surf.connect(sHP); sHP.connect(sLP); sLP.connect(surfBase); surfBase.connect(out);
+  surf.start(); nodes.push(surf,sHP,sLP,surfBase,surfLFO,surfGain);
+
+  // Receding gravel/foam — higher-frequency click-like noise retreating
+  const recede = makeNoiseSrc(ctx, false);
+  const rHP = ctx.createBiquadFilter(); rHP.type='highpass'; rHP.frequency.value=5000;
+  const rG  = ctx.createGain(); rG.gain.value=0.0;
+  const recLFO  = ctx.createOscillator(); recLFO.type='sine'; recLFO.frequency.value=0.143;
+  const recGain = ctx.createGain(); recGain.gain.value=0.055;
+  const recBase = ctx.createGain(); recBase.gain.value=0.06;
+  recLFO.connect(recGain); recGain.connect(recBase.gain); recLFO.start();
+  recede.connect(rHP); rHP.connect(recBase); recBase.connect(out);
+  recede.start(); nodes.push(recede,rHP,recBase,recLFO,recGain);
+
+  return nodes;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 💨  WIND  — Howling gusts with pitch-shifting and debris
+// ══════════════════════════════════════════════════════════════
+function startWind(ctx, out) {
+  const nodes = [];
+
+  // Base wind body — three overlapping bandpass layers
+  [[180,0.5],[350,0.7],[650,0.5]].forEach(([f,Q],i) => {
+    const n = makeNoiseSrc(ctx, true);
+    const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=f; bp.Q.value=Q;
+    const g  = ctx.createGain(); g.gain.value = 0.25;
+    // Each layer has gust at different speeds
+    const gustSpeed = 0.04 + i*0.025;
+    const [gLFO,gLG] = makeLFO(ctx, gustSpeed, 0.18, g.gain);
+    // Sweep filter freq for whooshing
+    const [fLFO,fLG] = makeLFO(ctx, gustSpeed*0.7, f*0.5, bp.frequency);
+    n.connect(bp); bp.connect(g); g.connect(out); n.start();
+    nodes.push(n,bp,g,gLFO,gLG,fLFO,fLG);
+  });
+
+  // High howl — resonant peak that rises and falls
+  const howl = makeNoiseSrc(ctx, false);
+  const hPK  = ctx.createBiquadFilter(); hPK.type='peaking'; hPK.frequency.value=900; hPK.Q.value=8; hPK.gain.value=18;
+  const hHP  = ctx.createBiquadFilter(); hHP.type='highpass'; hHP.frequency.value=600;
+  const hG   = ctx.createGain(); hG.gain.value = 0.06;
+  const [hLFO,hLG] = makeLFO(ctx, 0.035, 0.04, hG.gain);
+  const [hfLFO,hfLG] = makeLFO(ctx, 0.05, 350, hPK.frequency); // sweep the howl pitch
+  howl.connect(hPK); hPK.connect(hHP); hHP.connect(hG); hG.connect(out);
+  howl.start(); nodes.push(howl,hPK,hHP,hG,hLFO,hLG,hfLFO,hfLG);
+
+  // Sub-bass pressure — the "chest" of wind
+  const sub = makeNoiseSrc(ctx, true);
+  const sLP = ctx.createBiquadFilter(); sLP.type='lowpass'; sLP.frequency.value=60;
+  const sG  = ctx.createGain(); sG.gain.value=0.40;
+  const [sLFO,sLG] = makeLFO(ctx, 0.06, 0.25, sG.gain);
+  sub.connect(sLP); sLP.connect(sG); sG.connect(out);
+  sub.start(); nodes.push(sub,sLP,sG,sLFO,sLG);
+
+  // Debris/whistle — occasional high tonal element
+  function whistle() {
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator(); osc.type='sine';
+    const baseF = 400+Math.random()*300;
+    osc.frequency.setValueAtTime(baseF,now);
+    osc.frequency.linearRampToValueAtTime(baseF*(0.7+Math.random()*0.6), now+1.5+Math.random()*2);
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0,now); env.gain.linearRampToValueAtTime(0.03,now+0.4);
+    env.gain.setValueAtTime(0.025,now+1.5); env.gain.exponentialRampToValueAtTime(0.001,now+2.5+Math.random()*1);
+    osc.connect(env); env.connect(out); osc.start(now); osc.stop(now+4);
+    nodes.push(osc,env);
+  }
+  whistle();
+  const sched = () => {
+    const t = setTimeout(()=>{ if(activeSounds.wind){ whistle(); sched(); } }, 4000+Math.random()*8000);
+    nodes._tid = t;
+  };
+  sched();
+  return nodes;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🔥  FIREPLACE  — Realistic fire: roar, crackle, pops, wood
+// ══════════════════════════════════════════════════════════════
+function startFireplace(ctx, out) {
+  const nodes = [];
+
+  // Brown noise base — the roar/body of fire (double LP for true brown)
+  const base = makeNoiseSrc(ctx, true);
+  const bLP1 = ctx.createBiquadFilter(); bLP1.type='lowpass'; bLP1.frequency.value=320; bLP1.Q.value=0.4;
+  const bLP2 = ctx.createBiquadFilter(); bLP2.type='lowpass'; bLP2.frequency.value=180; bLP2.Q.value=0.4;
+  const bG   = ctx.createGain(); bG.gain.value=0.65;
+  // Flame breathe — slow volume pulse
+  const [bLFO,bLG] = makeLFO(ctx, 0.22, 0.18, bG.gain);
+  base.connect(bLP1); bLP1.connect(bLP2); bLP2.connect(bG); bG.connect(out);
+  base.start(); nodes.push(base,bLP1,bLP2,bG,bLFO,bLG);
+
+  // Mid crackle band — the main wood-burning sound
+  const crk = makeNoiseSrc(ctx, false);
+  const cBP = ctx.createBiquadFilter(); cBP.type='bandpass'; cBP.frequency.value=700; cBP.Q.value=1.2;
+  const cG  = ctx.createGain(); cG.gain.value=0.28;
+  const [cLFO,cLG] = makeLFO(ctx, 4.5, 0.22, cG.gain); // fast crackle modulation
+  crk.connect(cBP); cBP.connect(cG); cG.connect(out);
+  crk.start(); nodes.push(crk,cBP,cG,cLFO,cLG);
+
+  // High-freq embers — faint bright hiss
+  const embers = makeNoiseSrc(ctx, false);
+  const eHP = ctx.createBiquadFilter(); eHP.type='highpass'; eHP.frequency.value=4000;
+  const eLP = ctx.createBiquadFilter(); eLP.type='lowpass';  eLP.frequency.value=8000;
+  const eG  = ctx.createGain(); eG.gain.value=0.05;
+  const [eLFO,eLG] = makeLFO(ctx, 7, 0.035, eG.gain);
+  embers.connect(eHP); eHP.connect(eLP); eLP.connect(eG); eG.connect(out);
+  embers.start(); nodes.push(embers,eHP,eLP,eG,eLFO,eLG);
+
+  // Individual pops — sharp transients of wood knots popping
+  function pop() {
+    const now = ctx.currentTime;
+    // Sharp noise burst
+    const pn  = makeNoiseSrc(ctx, false);
+    const pBP = ctx.createBiquadFilter(); pBP.type='bandpass';
+    pBP.frequency.value=800+Math.random()*1400; pBP.Q.value=6+Math.random()*8;
+    const pE  = ctx.createGain();
+    pE.gain.setValueAtTime(0.18+Math.random()*0.14, now);
+    pE.gain.exponentialRampToValueAtTime(0.001, now+0.04+Math.random()*0.06);
+    pn.connect(pBP); pBP.connect(pE); pE.connect(out); pn.start(now); pn.stop(now+0.12);
+    // Tonal resonance of the pop
+    const osc = ctx.createOscillator(); osc.type='sine';
+    osc.frequency.value=300+Math.random()*200;
+    const oE = ctx.createGain();
+    oE.gain.setValueAtTime(0.04,now); oE.gain.exponentialRampToValueAtTime(0.001,now+0.08);
+    osc.connect(oE); oE.connect(out); osc.start(now); osc.stop(now+0.1);
+    nodes.push(pn,pBP,pE,osc,oE);
+  }
+
+  // Deep wood settling creaks
+  function creak() {
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator(); osc.type='sawtooth';
+    const startF = 60+Math.random()*80;
+    osc.frequency.setValueAtTime(startF, now);
+    osc.frequency.exponentialRampToValueAtTime(startF*0.5, now+0.3+Math.random()*0.4);
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0,now); env.gain.linearRampToValueAtTime(0.03,now+0.05);
+    env.gain.exponentialRampToValueAtTime(0.001,now+0.5);
+    const lpf = ctx.createBiquadFilter(); lpf.type='lowpass'; lpf.frequency.value=400;
+    osc.connect(lpf); lpf.connect(env); env.connect(out); osc.start(now); osc.stop(now+0.6);
+    nodes.push(osc,lpf,env);
+  }
+
+  pop(); creak();
+  const schedPop = () => {
+    const t = setTimeout(()=>{ if(activeSounds.fireplace){ pop(); schedPop(); } }, 150+Math.random()*900);
+    nodes._tid = t;
+  };
+  const schedCreak = () => {
+    const t = setTimeout(()=>{ if(activeSounds.fireplace){ creak(); schedCreak(); } }, 4000+Math.random()*8000);
+    nodes._tid2 = t;
+  };
+  schedPop(); schedCreak();
+
+  // Warm 50Hz hum of the fire
+  const hum = ctx.createOscillator(); hum.type='sine'; hum.frequency.value=50;
+  const humG = ctx.createGain(); humG.gain.value=0.03;
+  hum.connect(humG); humG.connect(out); hum.start();
+  nodes.push(hum,humG);
+
+  return nodes;
+}
+
+// ── SOUND ENGINE DISPATCH ──
+const SOUND_STARTERS = {
+  rain: startRain, thunder: startThunder, forest: startForest,
+  birds: startBirds, river: startRiver, ocean: startOcean,
+  wind: startWind, fireplace: startFireplace,
+};
+
+function startSound(id, volume) {
+  const ctx = getAudioCtx();
+  const gainNode = ctx.createGain();
+  gainNode.gain.value = (volume / 100) * 0.55;
+  gainNode.connect(ctx.destination);
+  const starter = SOUND_STARTERS[id];
+  const nodes = starter ? starter(ctx, gainNode) : [];
+  activeSounds[id] = { gainNode, volume, nodes };
+}
+
+function stopSound(id) {
+  const s = activeSounds[id];
+  if (!s) return;
+  if (s.nodes._tid)  clearTimeout(s.nodes._tid);
+  if (s.nodes._tid2) clearTimeout(s.nodes._tid2);
+  const ctx = getAudioCtx();
+  s.gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.4);
+  setTimeout(() => {
+    try {
+      s.nodes.forEach(n => { try { if(n.stop) n.stop(); n.disconnect(); } catch(e){} });
+      s.gainNode.disconnect();
+    } catch(e) {}
+  }, 900);
+  delete activeSounds[id];
+}
+
+function buildSoundGrids() {
+  ['quick-sound-grid', 'full-sound-grid'].forEach(gridId => {
+    const el = document.getElementById(gridId);
+    if (!el) return;
+    el.innerHTML = SOUNDS.map(s => `
+      <div class="sound-tile ${activeSounds[s.id] ? 'active' : ''}" id="tile-${gridId}-${s.id}" onclick="toggleSoundTile('${s.id}')">
+        <span class="sound-icon">${s.icon}</span>
+        <div class="sound-name">${s.name}</div>
+        <input type="range" class="range-input"
+          value="${activeSounds[s.id] ? activeSounds[s.id].volume : 50}"
+          min="0" max="100"
+          onclick="event.stopPropagation()"
+          oninput="setSoundVolume('${s.id}', this.value)">
+      </div>
+    `).join('');
+  });
+}
+
+function toggleSoundTile(id) {
+  const allTiles = document.querySelectorAll(`[id$="-${id}"]`);
+  const snd = SOUNDS.find(s => s.id === id);
+  if (activeSounds[id]) {
+    stopSound(id);
+    allTiles.forEach(t => t.classList.remove('active'));
+    showToast(`${snd.icon} ${snd.name} stopped`, 'info');
+  } else {
+    startSound(id, 50);
+    allTiles.forEach(t => t.classList.add('active'));
+    showToast(`${snd.icon} ${snd.name} playing`, 'success');
+  }
+  updateSidebarSounds();
+}
+
+function toggleSound(id) {
+  toggleSoundTile(id);
+  buildSoundGrids();
+}
+
+function setSoundVolume(id, v) {
+  const vol = parseInt(v);
+  if (activeSounds[id]) {
+    activeSounds[id].volume = vol;
+    activeSounds[id].gainNode.gain.setTargetAtTime((vol/100)*0.55, getAudioCtx().currentTime, 0.05);
+  }
+  document.querySelectorAll(`[id$="-${id}"] .range-input`).forEach(input => { input.value = vol; });
+}
+
+function updateSidebarSounds() {
+  ['rain','fireplace','forest','ocean'].forEach(id => {
+    const el = document.getElementById(`sb-${id}`);
+    if (el) el.classList.toggle('active', !!activeSounds[id]);
+  });
+}
+
+
+// ============================================================
+// TO-DO LIST
+// ============================================================
+let todos = [
+  { id: 1, text: 'Review Chapter 4 notes', done: false, priority: 'high' },
+  { id: 2, text: 'Complete problem set 3', done: false, priority: 'med' },
+  { id: 3, text: 'Watch lecture recording', done: true, priority: 'low' },
+  { id: 4, text: 'Outline essay draft', done: false, priority: 'high' },
+];
+
+let nextTodoId = 5;
+
+function addTodo(page = 'dash') {
+  const input = document.getElementById(`todo-input-${page}`);
+  const text = input.value.trim();
+  if (!text) return;
+  const priorityEl = document.getElementById('todo-priority-tasks');
+  const priority = priorityEl ? priorityEl.value : 'med';
+  todos.unshift({ id: nextTodoId++, text, done: false, priority });
+  input.value = '';
+  renderTodos();
+  updateTasksBadge();
+}
+
+function toggleTodo(id) {
+  const todo = todos.find(t => t.id === id);
+  if (todo) { todo.done = !todo.done; renderTodos(); updateTasksBadge(); }
+}
+
+function deleteTodo(id) {
+  todos = todos.filter(t => t.id !== id);
+  renderTodos();
+  updateTasksBadge();
+}
+
+function renderTodos() {
+  const pCls = { high: 'priority-high', med: 'priority-med', low: 'priority-low' };
+  const pLabel = { high: 'High', med: 'Med', low: 'Low' };
+  const html = todos.map(t => `
+    <div class="todo-item ${t.done ? 'done' : ''}">
+      <div class="todo-check" onclick="toggleTodo(${t.id})">${t.done ? '✓' : ''}</div>
+      <div class="todo-text">${t.text}</div>
+      <div class="todo-priority ${pCls[t.priority]}">${pLabel[t.priority]}</div>
+      <button class="todo-del" onclick="deleteTodo(${t.id})">✕</button>
+    </div>
+  `).join('');
+  ['todo-list-dash', 'todo-list-tasks'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  });
+}
+
+function updateTasksBadge() {
+  const remaining = todos.filter(t => !t.done).length;
+  const badge = document.getElementById('tasks-badge');
+  if (badge) { badge.textContent = remaining; badge.style.display = remaining ? '' : 'none'; }
+}
+
+// ============================================================
+// HEATMAP
+// ============================================================
+function buildHeatmap() {
+  const grid = document.getElementById('heatmap-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const levels = [0,0,1,2,0,3,4,2,1,3,2,0,4,3];
+  levels.forEach(lv => {
+    const cell = document.createElement('div');
+    cell.className = 'heatmap-cell';
+    if (lv > 0) cell.dataset.level = lv;
+    grid.appendChild(cell);
+  });
+
+  // Monthly heatmap
+  const monthly = document.getElementById('monthly-heatmap');
+  if (!monthly) return;
+  monthly.innerHTML = '';
+  for (let i = 0; i < 30; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'heatmap-cell';
+    const lv = [0,1,2,3,4][Math.floor(Math.random() * 5)];
+    if (lv > 0) cell.dataset.level = lv;
+    cell.style.cssText = 'aspect-ratio:1;border-radius:3px;';
+    monthly.appendChild(cell);
+  }
+}
+
+// ============================================================
+// WEEKLY CHART
+// ============================================================
+function buildWeekChart() {
+  const chart = document.getElementById('week-chart');
+  if (!chart) return;
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const mins = [120, 180, 250, 100, 200, 80, 160];
+  const max = Math.max(...mins);
+  chart.innerHTML = days.map((d, i) => `
+    <div class="week-bar-wrap">
+      <div class="week-bar" style="height:${Math.max(4, (mins[i]/max)*84)}px; opacity:${i===3?'1':'0.75'}">
+      </div>
+      <div class="week-bar-label">${d}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// PRODUCTIVITY TIPS
+// ============================================================
+const TIPS = [
+  { icon: '🎯', title: 'Work in sprints', body: 'The Pomodoro method trains your brain to expect focus bursts. After 4 sessions, take a longer break.' },
+  { icon: '🌿', title: 'Nature sounds boost focus', body: 'Studies show moderate ambient noise (like rain or forest) improves creative thinking and concentration.' },
+  { icon: '💧', title: 'Hydrate to think clearly', body: 'Even mild dehydration (1-2%) impairs working memory and concentration. Keep water at your desk.' },
+  { icon: '📵', title: 'Single-tab studying', body: 'Every tab switch costs 20+ minutes of deep focus recovery. Close everything except your work.' },
+  { icon: '✍️', title: 'Handwrite first', body: 'Writing notes by hand improves encoding by 40% over typing. Summarize in your own words.' },
+];
+
+function buildTips() {
+  const el = document.getElementById('tips-list');
+  if (!el) return;
+  el.innerHTML = TIPS.map(t => `
+    <div style="display:flex;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--glass-border);">
+      <span style="font-size:20px;flex-shrink:0;">${t.icon}</span>
+      <div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:3px;">${t.title}</div>
+        <div style="font-size:12px;color:var(--text-secondary);line-height:1.5;">${t.body}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// QUOTES
+// ============================================================
+const QUOTES = [
+  { text: 'The secret of getting ahead is getting started.', author: 'Mark Twain' },
+  { text: 'It always seems impossible until it\'s done.', author: 'Nelson Mandela' },
+  { text: 'Focus is the art of knowing what to ignore.', author: 'James Clear' },
+  { text: 'The more you read, the more things you will know.', author: 'Dr. Seuss' },
+  { text: 'Deep work is the superpower of the 21st century.', author: 'Cal Newport' },
+  { text: 'An investment in knowledge pays the best interest.', author: 'Benjamin Franklin' },
+  { text: 'Either write something worth reading or do something worth writing.', author: 'Benjamin Franklin' },
+];
+
+function updateGreeting() {
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const now = new Date();
+  const el = document.getElementById('greeting-time');
+  if (el) el.textContent = `${greeting} · ${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+  const headline = document.querySelector('.greeting-headline');
+  if (headline) headline.innerHTML = `Ready to <em>flow</em>, Sarah?`;
+
+  const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  const qEl = document.getElementById('daily-quote');
+  if (qEl) qEl.innerHTML = `"${quote.text}" <cite>— ${quote.author}</cite>`;
+
+  const focusTasks = document.getElementById('focus-task-label');
+  const activeTodo = todos.find(t => !t.done);
+  if (focusTasks && activeTodo) focusTasks.textContent = `Working on: ${activeTodo.text}`;
+}
+
+// ============================================================
+// FOCUS MODE
+// ============================================================
+function enterFocusMode() {
+  document.getElementById('focus-mode').classList.add('active');
+  showToast('⚡ Focus mode — all distractions removed', 'success');
+}
+
+function exitFocusMode() {
+  document.getElementById('focus-mode').classList.remove('active');
+}
+
+// ============================================================
+// THEME MODAL
+// ============================================================
+function openThemeModal() {
+  buildSceneThumbs();
+  document.getElementById('theme-modal').classList.add('active');
+}
+
+function closeThemeModal() {
+  document.getElementById('theme-modal').classList.remove('active');
+}
+
+document.getElementById('theme-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('theme-modal')) closeThemeModal();
+});
+
+// ============================================================
+// LIGHT / DARK MODE
+// ============================================================
+function toggleMode() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-mode') === 'dark';
+  html.setAttribute('data-mode', isDark ? 'light' : 'dark');
+  const btn = document.querySelector('[onclick="toggleMode()"]');
+  if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+  showToast(isDark ? '☀️ Light mode' : '🌙 Dark mode', 'info');
+}
+
+// ============================================================
+// PAGE NAVIGATION
+// ============================================================
+function showPage(name, topNavBtn, sideNavItem) {
+  document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${name}`)?.classList.add('active');
+
+  if (topNavBtn) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    topNavBtn.classList.add('active');
+  }
+  if (sideNavItem) {
+    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+    sideNavItem.classList.add('active');
+  }
+
+  // Lazy build
+  if (name === 'stats') { buildWeekChart(); buildTips(); buildHeatmap(); }
+  if (name === 'sounds') { buildSoundGrids(); buildPlaylists(); }
+  if (name === 'tasks') renderTodos();
+}
+
+// ============================================================
+// TOAST NOTIFICATION
+// ============================================================
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icons = { success: '✅', info: 'ℹ️' };
+  toast.innerHTML = `<span class="toast-icon">${icons[type]||'💬'}</span>${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3100);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  buildSceneThumbs();
+  buildSoundGrids();
+  buildPlaylists();
+  buildHeatmap();
+  buildWeekChart();
+  buildTips();
+  renderTodos();
+  updateTasksBadge();
+  updateTimerDisplay();
+  updateGreeting();
+  addRainDrops(document.getElementById('scene-overlay'));
+  animateScene();
+}
+
+init();
+</script>
+</body>
+</html>
